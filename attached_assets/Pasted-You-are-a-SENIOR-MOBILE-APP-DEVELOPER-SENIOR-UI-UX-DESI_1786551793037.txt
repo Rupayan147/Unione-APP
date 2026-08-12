@@ -1,0 +1,1008 @@
+You are a SENIOR MOBILE APP DEVELOPER, SENIOR UI/UX DESIGNER, PRODUCT DESIGNER, and SOFTWARE ARCHITECT.
+
+Build a polished, production-quality MOBILE APP PROTOTYPE called:
+
+UNIONE
+AI-Assisted Government Benefits Discovery & Utilization
+
+IMPORTANT:
+This is a MOBILE APPLICATION, NOT a website and NOT a desktop dashboard.
+
+The app must be designed primarily for a phone screen and must feel like a real modern consumer mobile product that could be launched by a serious startup.
+
+==================================================
+1. PRODUCT CONCEPT
+==================================================
+
+Unione helps people discover government benefits and assistance programs that may be relevant to them.
+
+The future product will use:
+- Machine learning personalization
+- RAG
+- Conversational AI
+- Government data
+- Eligibility analysis
+- Personalized recommendations
+- Application guidance
+- Application tracking
+
+FOR THIS VERSION:
+Use realistic DUMMY DATA and MOCK AI/ML responses.
+
+Do NOT pretend that the prototype is connected to real government systems.
+
+However, structure the code so that real ML, RAG, APIs and databases can be integrated later without redesigning the mobile UI.
+
+==================================================
+2. TECHNOLOGY
+==================================================
+
+Use:
+
+- React Native
+- Expo
+- TypeScript
+- Expo Router if appropriate
+- Modern component-based architecture
+- Clean reusable components
+- Local mock data/services for this prototype
+
+The application must run using Expo Go.
+
+Avoid unnecessary dependencies.
+
+Make sure the project is actually runnable.
+
+==================================================
+3. CORE DESIGN DIRECTION
+==================================================
+
+The UI must feel like a premium modern fintech / healthcare / civic-tech startup.
+
+Think:
+
+- Apple-level simplicity
+- Linear-level cleanliness
+- modern fintech visual hierarchy
+- premium SaaS polish
+- accessible government-service UX
+- calm, trustworthy and intelligent
+- NOT like a generic AI-generated template
+
+Do NOT create a website-style interface.
+
+Do NOT use:
+- giant desktop cards
+- excessive gradients
+- excessive glassmorphism
+- random colorful blobs
+- generic AI dashboard layouts
+- unnecessary charts
+- overly rounded cartoon-like cards
+- excessive icons
+- cluttered screens
+
+The app should feel trustworthy because users are dealing with important financial and government assistance information.
+
+==================================================
+4. VISUAL SYSTEM
+==================================================
+
+Create a consistent design system.
+
+Suggested visual direction:
+
+Background:
+- warm/off-white or very light neutral
+
+Primary:
+- deep navy / dark blue
+
+Accent:
+- sophisticated teal/green
+
+Text:
+- strong dark primary text
+- muted gray secondary text
+
+Cards:
+- clean white
+- subtle border
+- very subtle shadow
+- moderate corner radius
+
+Typography:
+- large confident headings
+- readable body text
+- strong numerical emphasis
+- clear hierarchy
+
+Spacing:
+- generous
+- consistent
+- mobile-first
+
+Use icons consistently.
+
+Do not use emoji as the primary UI icon system.
+
+==================================================
+5. APP NAVIGATION
+==================================================
+
+Create a bottom tab navigation with:
+
+1. Home
+2. Discover
+3. Ask Unione
+4. Applications
+5. Profile
+
+The navigation must feel native and polished.
+
+Use appropriate icons.
+
+The selected tab should be visually obvious.
+
+==================================================
+6. ONBOARDING
+==================================================
+
+Create a short onboarding flow.
+
+Screen 1:
+
+UNIONE
+
+"Benefits shouldn't be this hard to find."
+
+Supporting text:
+
+"Unione helps you discover assistance programs that may be relevant to your situation — all in one place."
+
+Button:
+
+"Get Started"
+
+Screen 2:
+
+"Tell us a little about yourself"
+
+Collect dummy/profile information:
+
+- Age
+- State
+- ZIP code
+- Household size
+- Employment status
+- Approximate annual income
+- Number of children
+
+Do NOT ask for unnecessary sensitive information.
+
+Screen 3:
+
+"Your benefit profile is ready"
+
+Show a concise summary of the user's information.
+
+Button:
+
+"See My Benefits"
+
+This should navigate to Home.
+
+==================================================
+7. DEMO USER
+==================================================
+
+Use a realistic fictional demo user:
+
+Name:
+Sarah Johnson
+
+Age:
+32
+
+State:
+California
+
+ZIP:
+90001
+
+Household:
+4 people
+
+Children:
+2
+
+Employment:
+Recently unemployed
+
+Annual household income:
+$32,000
+
+Make it obvious that this is DEMO DATA somewhere appropriate in the prototype, without ruining the UI.
+
+==================================================
+8. HOME SCREEN
+==================================================
+
+The Home screen is extremely important.
+
+Create a premium personalized dashboard.
+
+Top:
+
+"Good morning, Sarah"
+
+Subtitle:
+
+"Let's find support that may be available to you."
+
+Show a compact profile summary.
+
+Then a prominent section:
+
+"Your top matches"
+
+Show 3–4 personalized benefits.
+
+Example:
+
+SNAP
+98% match
+
+Medicaid
+95% match
+
+Unemployment Insurance
+93% match
+
+Childcare Assistance
+87% match
+
+Do not make the percentage look like scientific certainty.
+
+Use wording such as:
+
+"Potential match"
+or
+"Based on your profile"
+
+Include a section:
+
+"Why these are recommended"
+
+Example:
+
+"Based on your household size, location, income and employment situation."
+
+Then:
+
+"Continue where you left off"
+
+Show an application card if applicable.
+
+Example:
+
+SNAP
+"Action required"
+"Upload proof of income"
+
+Progress indicator.
+
+Then a section:
+
+"Need help?"
+
+Large but elegant CTA:
+
+"Ask Unione"
+
+Subtitle:
+
+"Get answers about benefits, eligibility and next steps."
+
+==================================================
+9. DISCOVER SCREEN
+==================================================
+
+Create a polished benefit discovery experience.
+
+Top:
+
+"Discover benefits"
+
+Search field:
+
+"Search benefits or assistance..."
+
+Categories:
+
+- Food
+- Healthcare
+- Housing
+- Employment
+- Family
+- Financial
+- Education
+- Utilities
+
+Then:
+
+"For you"
+
+Show personalized benefit cards.
+
+Each benefit card should contain:
+
+Benefit name
+
+Short description
+
+Potential match percentage
+
+Category
+
+"View details"
+
+Examples:
+
+SNAP
+"Food assistance for eligible households."
+98% potential match
+
+Medicaid
+"Healthcare coverage for eligible individuals and families."
+95% potential match
+
+Unemployment Insurance
+"Temporary financial support for eligible workers."
+93% potential match
+
+WIC
+"Nutrition support for eligible women, infants and children."
+91% potential match
+
+Housing Assistance
+"Programs that may help eligible households with housing costs."
+82% potential match
+
+Cards must be compact and easy to scan.
+
+==================================================
+10. BENEFIT DETAILS SCREEN
+==================================================
+
+When the user taps a benefit, show a detailed but easy-to-read screen.
+
+Example:
+
+SNAP
+
+"Supplemental Nutrition Assistance Program"
+
+Badge:
+
+"98% potential match"
+
+Sections:
+
+"Why you may be a potential match"
+
+Use 3–4 reasons:
+
+✓ Household size
+✓ Reported income
+✓ California residence
+✓ Current employment situation
+
+Then:
+
+"What it provides"
+
+Clear explanation.
+
+Then:
+
+"What you may need"
+
+- Proof of identity
+- Proof of income
+- Household information
+- Residency information
+
+Then:
+
+"How it works"
+
+Step 1
+Check requirements
+
+Step 2
+Prepare documents
+
+Step 3
+Submit application
+
+Step 4
+Wait for determination
+
+Then:
+
+"Official information"
+
+Show a source card:
+
+"Source: U.S. Government / State agency"
+"Last verified: Demo data"
+
+Include:
+
+"View official source"
+
+For the prototype this can use a placeholder URL or safe dummy link.
+
+IMPORTANT:
+Do not claim the dummy information is real-time verified.
+
+Primary CTA:
+
+"Start application"
+
+==================================================
+11. ASK UNIONE SCREEN
+==================================================
+
+This is one of the MOST IMPORTANT screens.
+
+It should feel like a premium AI assistant, NOT a generic ChatGPT clone.
+
+Header:
+
+"Ask Unione"
+
+Subtitle:
+
+"Understand your options. Find your next step."
+
+Show suggested prompts:
+
+"What benefits might I qualify for?"
+
+"Why was SNAP recommended?"
+
+"What documents do I need?"
+
+"I recently lost my job. What help can I explore?"
+
+Then create a realistic conversation UI.
+
+Demo conversation:
+
+User:
+
+"I recently lost my job and have two children. What support should I look into?"
+
+Unione:
+
+"Based on the information in your profile, you may want to explore a few programs.
+
+SNAP may help with food expenses.
+Unemployment Insurance may provide temporary financial support if you meet the requirements.
+Childcare assistance may also be worth exploring.
+
+I can explain why each program appeared in your recommendations."
+
+Then show source chips/cards.
+
+Example:
+
+"Based on demo benefit knowledge"
+
+"Official source"
+
+The AI response should clearly communicate that eligibility is not guaranteed.
+
+Create a text input:
+
+"Ask Unione anything..."
+
+and a send button.
+
+For the prototype, implement mock conversational responses.
+
+==================================================
+12. APPLICATIONS SCREEN
+==================================================
+
+Create a realistic application tracking experience.
+
+Header:
+
+"Your applications"
+
+Show:
+
+SNAP
+Status: Action required
+
+Progress:
+80%
+
+Next step:
+"Upload proof of income"
+
+Then:
+
+Medicaid
+Status: Under review
+
+Progress:
+60%
+
+Then:
+
+Unemployment Insurance
+Status: Submitted
+
+Progress:
+100%
+
+Create an application details screen.
+
+Timeline:
+
+Profile
+✓ Complete
+
+Eligibility information
+✓ Complete
+
+Documents
+→ Action required
+
+Submission
+○ Not started
+
+Decision
+○ Pending
+
+Add appropriate CTAs.
+
+For example:
+
+"Continue application"
+
+Again, this is DEMO tracking only.
+
+==================================================
+13. PROFILE SCREEN
+==================================================
+
+Create a polished profile screen.
+
+Show:
+
+Sarah Johnson
+
+California
+90001
+
+Then:
+
+"My information"
+
+Age
+32
+
+Household
+4 people
+
+Children
+2
+
+Employment
+Recently unemployed
+
+Income
+$32,000
+
+Sections:
+
+Personal information
+
+Household
+
+Preferences
+
+Notifications
+
+Privacy & security
+
+Help & support
+
+About Unione
+
+Include:
+
+"Demo mode"
+
+==================================================
+14. AI/ML ARCHITECTURE
+==================================================
+
+Even though this prototype uses dummy data, DO NOT hardcode recommendation logic directly into UI components.
+
+Create a service abstraction.
+
+Example architecture:
+
+services/
+    recommendationService.ts
+    benefitService.ts
+    aiService.ts
+
+The UI should call services.
+
+Example:
+
+getPersonalizedBenefits()
+
+getBenefitDetails(id)
+
+sendMessage(message)
+
+getApplications()
+
+For now these services return mock data.
+
+Later they will be replaced by:
+
+ML API
+RAG API
+Backend API
+
+without rewriting the UI.
+
+==================================================
+15. MOCK ML LAYER
+==================================================
+
+Create a mock recommendation service.
+
+Example output:
+
+[
+  {
+    benefitId: "snap",
+    matchScore: 0.98
+  },
+  {
+    benefitId: "medicaid",
+    matchScore: 0.95
+  },
+  {
+    benefitId: "unemployment",
+    matchScore: 0.93
+  }
+]
+
+IMPORTANT:
+
+Use the phrase:
+
+"Potential match"
+
+rather than:
+
+"You qualify"
+
+because the actual ML model and eligibility verification will be added later.
+
+==================================================
+16. MOCK RAG / AI LAYER
+==================================================
+
+Create an abstraction for the future RAG system.
+
+Example:
+
+aiService.ts
+
+Functions:
+
+askUnione(message)
+
+getRelevantSources(message)
+
+For now use local mock benefit knowledge.
+
+The future architecture should be:
+
+Mobile App
+→ Backend API
+→ RAG retrieval
+→ Government knowledge base
+→ LLM
+→ grounded response + sources
+
+Do not implement a fake "AI" that simply returns random text.
+
+Use deterministic mock responses for the prototype.
+
+==================================================
+17. DATA MODEL
+==================================================
+
+Create realistic TypeScript types.
+
+Examples:
+
+UserProfile
+
+Benefit
+
+BenefitRecommendation
+
+Application
+
+ChatMessage
+
+Source
+
+Make these reusable throughout the app.
+
+Example Benefit:
+
+{
+  id,
+  name,
+  category,
+  description,
+  potentialMatch,
+  whyRecommended,
+  whatItProvides,
+  requirements,
+  applicationSteps,
+  source
+}
+
+==================================================
+18. MOCK BENEFIT DATA
+==================================================
+
+Create at least 10 realistic demo benefits:
+
+1. SNAP
+2. Medicaid
+3. Unemployment Insurance
+4. WIC
+5. TANF
+6. Housing Assistance
+7. Childcare Assistance
+8. SSI
+9. Utility Assistance
+10. Earned Income Tax Credit
+
+Make each benefit have realistic structured information.
+
+Do not invent highly specific legal eligibility rules.
+
+Keep descriptions general and label the prototype as demo data.
+
+==================================================
+19. UX REQUIREMENTS
+==================================================
+
+The app must feel fast and intuitive.
+
+Include:
+
+- loading states
+- empty states
+- pressed states
+- smooth navigation
+- keyboard-safe chat UI
+- scrollable content
+- proper safe-area handling
+- accessible touch targets
+- readable text
+- consistent spacing
+- graceful error states
+
+Do not make every screen a huge collection of cards.
+
+Use hierarchy and whitespace.
+
+==================================================
+20. MICROINTERACTIONS
+==================================================
+
+Add subtle animations where useful:
+
+- screen transitions
+- card press feedback
+- recommendation appearance
+- progress animations
+- chat message appearance
+
+Keep animations subtle and professional.
+
+Do NOT over-animate.
+
+==================================================
+21. RESPONSIVE MOBILE DESIGN
+==================================================
+
+This must work on common phone sizes.
+
+Optimize for:
+
+- iPhone-sized screens
+- Android phones
+
+Do not design around desktop dimensions.
+
+Avoid horizontal overflow.
+
+Make sure content scrolls correctly.
+
+==================================================
+22. CODE QUALITY
+==================================================
+
+Use:
+
+- TypeScript
+- reusable components
+- clean naming
+- separation of UI and data
+- centralized mock data
+- service abstraction
+- no duplicated code
+- no unnecessary dependencies
+
+Suggested structure:
+
+app/
+components/
+data/
+services/
+types/
+constants/
+utils/
+
+Keep the architecture easy for another developer to understand.
+
+==================================================
+23. FUTURE INTEGRATION
+==================================================
+
+Prepare clear integration boundaries for:
+
+1. Real ML recommendation model
+
+2. FastAPI backend
+
+3. RAG pipeline
+
+4. Vector database
+
+5. LLM provider
+
+6. Government data ingestion
+
+The prototype must not require these systems to run.
+
+The app should work completely with mock data.
+
+==================================================
+24. DO NOT OVERBUILD
+==================================================
+
+Do NOT build:
+
+- Kubernetes
+- microservices
+- production cloud infrastructure
+- real government application submission
+- real government authentication
+- payment system
+- complicated admin dashboard
+- unnecessary analytics dashboard
+- massive scraping system
+
+This is a high-fidelity competition prototype.
+
+Focus on:
+
+BEAUTIFUL UI
++
+COMPLETE USER JOURNEY
++
+REALISTIC DATA
++
+CLEAN ARCHITECTURE
++
+FUTURE ML/RAG INTEGRATION
+
+==================================================
+25. MOST IMPORTANT QUALITY REQUIREMENT
+==================================================
+
+Before considering the task complete:
+
+RUN THE APPLICATION.
+
+Test:
+
+- onboarding
+- navigation
+- Home
+- Discover
+- benefit details
+- Ask Unione
+- chat interaction
+- Applications
+- Profile
+- back navigation
+- scrolling
+- buttons
+- forms
+- keyboard behavior
+
+Fix all obvious runtime errors.
+
+Do not just generate code and stop.
+
+==================================================
+26. FINAL USER EXPERIENCE
+==================================================
+
+The finished prototype should make a judge think:
+
+"This looks like a real product."
+
+The user should be able to:
+
+1. Create a profile
+2. See personalized benefit recommendations
+3. Explore benefits
+4. Understand why a benefit was recommended
+5. Ask Unione questions
+6. See AI-style grounded answers
+7. View sources
+8. Start/continue an application
+9. Track application progress
+10. Manage their profile
+
+Everything can use demo data, but the EXPERIENCE must feel real.
+
+==================================================
+27. FINAL INSTRUCTION TO REPLIT AGENT
+==================================================
+
+Do not give me a simple landing page.
+
+Do not build a desktop website.
+
+Do not make this look like a generic AI dashboard.
+
+Build a REAL MOBILE APP prototype.
+
+Prioritize visual polish, usability, consistency, navigation and a believable end-to-end experience.
+
+Before finishing, run the project and fix runtime/build errors.
+
+If you need to make implementation decisions, prioritize:
+
+1. Mobile UX
+2. Visual quality
+3. Functional navigation
+4. Clean architecture
+5. Future ML/RAG integration
+6. Simplicity
+
+Start by creating the complete project structure and implement the application.

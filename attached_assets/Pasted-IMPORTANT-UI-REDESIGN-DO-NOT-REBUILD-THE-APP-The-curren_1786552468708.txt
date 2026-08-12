@@ -1,0 +1,61 @@
+IMPORTANT UI REDESIGN — DO NOT REBUILD THE APP.
+
+The current app feels too dark, serious, and visually depressing. Redesign the visual system toward a PREMIUM, BRIGHT, POSITIVE mobile app.
+
+1. COLOR PALETTE
+- Make WHITE / OFF-WHITE the primary background.
+- Use dark navy only for primary text.
+- Use a fresh teal/turquoise as the main accent.
+- Use subtle purple/blue accents sparingly.
+- Use very light pastel blue/teal/lavender backgrounds for feature cards.
+- Remove the dominant dark teal background completely.
+- Avoid black-heavy UI.
+- Overall feeling: optimistic, trustworthy, modern, welcoming and intelligent.
+
+2. ASK UNIONE — THIS IS THE MAIN USP
+Completely improve the Ask Unione screen.
+
+It should NOT look like a generic ChatGPT clone.
+
+Create a beautiful AI assistant experience:
+- Large clean "Ask Unione" heading.
+- Friendly AI visual/illustration/avatar near the top.
+- Prominent conversational input card.
+- Input placeholder:
+  "Ask about benefits, eligibility or your next step..."
+- Clear send button.
+- Beautiful suggested question chips/cards.
+- Better spacing and typography.
+- Chat bubbles should be clean white/light pastel cards with excellent contrast.
+- Make AI responses visually structured with:
+  • short answer
+  • relevant benefit cards
+  • "Why this may apply" section
+  • "Next step" section
+  • source/official information chips
+- Make the conversation feel like a guided benefits assistant rather than a normal chatbot.
+- Keep the screen visually spacious and premium.
+
+3. FIX THE CURRENT TEXT RENDERING BUG
+The current Ask screen is displaying text incorrectly/reversed/garbled.
+
+Ensure ALL text renders normally:
+"Explore"
+"What benefits could I qualify for?"
+"What documents do I need?"
+"Why was SNAP recommended?"
+etc.
+
+Check fonts, text direction, transforms, scaling and any styling causing the reversed/garbled text.
+
+4. OVERALL APP
+Apply the new bright design system consistently across Home, Discover, Applications and Profile.
+
+Think:
+Apple Health + modern fintech + premium AI assistant.
+
+Do NOT change the existing navigation or functionality.
+Do NOT add unnecessary features.
+Do NOT use excessive gradients or childish colors.
+
+After making the changes, RUN the app and verify that all text renders correctly and that the Ask Unione screen looks excellent on a phone.

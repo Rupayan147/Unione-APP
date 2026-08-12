@@ -1,0 +1,1 @@
+- [Expo symbol typing](expo-symbol-typing.md) — use literal SF Symbols or Feather for dynamic fallback icon helpers in Expo SDK 54.

@@ -1,0 +1,505 @@
+MAJOR UX/UI REDESIGN — DO NOT JUST TWEAK THE CURRENT CARDS.
+
+I reviewed the current app. The biggest problem is NOT functionality. The app feels like disconnected cards stacked on a screen. It has no visual identity, no emotional journey, no motivation, and too much visual clutter.
+
+I want you to redesign the EXPERIENCE, especially HOME, around one clear idea:
+
+"Unione helps you move from uncertainty → discovery → understanding → action."
+
+Do NOT simply rearrange the existing components. Recompose the screens.
+
+==================================================
+1. NEW VISUAL DIRECTION
+==================================================
+
+Make Unione feel like a premium, optimistic, human-centered civic-tech app.
+
+Think:
+
+Apple-level simplicity
++ modern fintech polish
++ Duolingo-like motivation
++ Calm-like emotional warmth
++ premium AI product
+
+The app should feel:
+- hopeful
+- positive
+- intelligent
+- trustworthy
+- encouraging
+- clean
+- modern
+
+Use a WHITE / very light background.
+
+Color system:
+- deep navy for text
+- vibrant teal as primary brand color
+- fresh turquoise
+- soft lavender
+- subtle sky blue
+- occasional warm accent
+
+Use color to create hierarchy, not decoration.
+
+NO dark teal backgrounds.
+
+NO huge number of bordered cards.
+
+NO excessive pills.
+
+NO random colors for every section.
+
+NO visual clutter.
+
+==================================================
+2. CREATE A REAL UNIONE BRAND IDENTITY
+==================================================
+
+The current UI looks like a generic template.
+
+Create a stronger visual identity.
+
+The Unione brand should have:
+- distinctive U-inspired visual language
+- subtle flowing/connecting shapes
+- small abstract illustrations
+- friendly AI visual
+- consistent icon style
+- consistent accent colors
+
+Use visual elements to communicate:
+
+"Connecting people with support."
+
+Do not make it childish.
+
+==================================================
+3. HOME SCREEN MUST BECOME A JOURNEY
+==================================================
+
+The Home screen should NOT feel like:
+
+Greeting
+↓
+Profile card
+↓
+3 cards
+↓
+3 more cards
+↓
+more cards
+
+Instead, create a narrative.
+
+Top:
+
+UNIONE
+
+"Good morning, Sarah 👋"
+
+"Let's find the support that's right for you."
+
+Then create a visually beautiful HERO SECTION:
+
+"Your path to support"
+
+Show a visual journey:
+
+DISCOVER → UNDERSTAND → APPLY → TRACK
+
+Use a connected flowing line/path rather than four unrelated cards.
+
+Current stage:
+
+01 DISCOVER
+
+"You're already on your way."
+
+Then a strong CTA:
+
+"Continue your journey →"
+
+This should take the user to Discover.
+
+==================================================
+4. MOTIVATE THE USER
+==================================================
+
+Unione should make the user feel progress.
+
+Create a section such as:
+
+"You're 1 step closer"
+
+or
+
+"Let's take the next step together."
+
+Example:
+
+✓ Tell us about you
+✓ Find potential benefits
+→ Understand your best matches
+○ Apply
+○ Track your progress
+
+Use visual progress.
+
+The user should understand:
+
+"I don't need to figure everything out myself. Unione will guide me."
+
+This is CRITICAL to the product.
+
+==================================================
+5. PERSONALIZED BENEFITS SHOULD COME AFTER THE JOURNEY
+==================================================
+
+After the journey section:
+
+"Support we found for you"
+
+Subtitle:
+
+"Based on what you've told us"
+
+Then show ONLY the 2–3 strongest recommendations.
+
+Do NOT show 5–10 giant cards.
+
+Make each recommendation visually elegant.
+
+Example:
+
+SNAP
+
+Food assistance
+
+98%
+Potential match
+
+"Why this appeared"
+"Your household size, location and reported income."
+
+CTA:
+
+"Explore"
+
+Then Medicaid etc.
+
+Use subtle visual accents to distinguish categories.
+
+==================================================
+6. CREATE A "WHY" EXPERIENCE
+==================================================
+
+Instead of just:
+
+SNAP
+98%
+
+make Unione feel intelligent.
+
+For example:
+
+"Why SNAP?"
+
+✓ 4-person household
+✓ 2 children
+✓ California
+✓ Reported income
+
+"Unione found this based on your profile."
+
+This creates trust.
+
+==================================================
+7. ASK UNIONE SHOULD FEEL LIKE A GUIDE
+==================================================
+
+Ask Unione is the MAIN USP.
+
+Do not make it look like ChatGPT.
+
+The experience should feel like:
+
+"Talk to someone who helps you understand your options."
+
+Top:
+
+ASK UNIONE
+
+"Not sure where to start?"
+
+"Tell me what's going on. I'll help you find your next step."
+
+Create a beautiful AI visual/character/abstract Unione assistant.
+
+Then a prominent input:
+
+"Tell Unione what you need help with..."
+
+Below:
+
+"Try asking"
+
+"What support could I get?"
+
+"I recently lost my job."
+
+"Help with rent"
+
+"What should I do next?"
+
+The AI conversation should visually guide the user toward ACTION.
+
+After an answer, show:
+
+YOUR NEXT STEP
+
+"Explore SNAP"
+
+"See what you'll need"
+
+rather than just a long chatbot response.
+
+==================================================
+8. CREATE A CLEAR FIRST-TIME USER JOURNEY
+==================================================
+
+Add/rework onboarding so the user understands the product BEFORE being thrown into the dashboard.
+
+Sequence:
+
+WELCOME
+
+"Finding support shouldn't feel overwhelming."
+
+↓
+
+TELL US ABOUT YOU
+
+"Answer a few questions. We'll personalize your experience."
+
+↓
+
+YOUR OPTIONS
+
+"We'll help you discover programs that may fit your situation."
+
+↓
+
+YOUR NEXT STEP
+
+"You don't have to figure it out alone."
+
+CTA:
+
+"Let's get started"
+
+Make this visually beautiful and emotionally motivating.
+
+==================================================
+9. REDUCE VISUAL CLUTTER
+==================================================
+
+IMPORTANT:
+
+There are currently TOO MANY bordered boxes.
+
+Reduce the number of cards by approximately 50%.
+
+Use:
+- whitespace
+- typography
+- section headers
+- subtle background blocks
+- visual hierarchy
+- flowing sections
+
+Not everything needs to be inside a card.
+
+Some content should simply exist naturally on the page.
+
+==================================================
+10. CREATE VISUAL HIERARCHY
+==================================================
+
+Every screen should have:
+
+ONE primary message
+
+ONE primary action
+
+Supporting information underneath.
+
+For Home:
+
+Primary message:
+"Let's find the support that's right for you."
+
+Primary action:
+"Continue your journey"
+
+Secondary:
+Recommended benefits
+
+For Ask:
+
+Primary:
+"Tell Unione what's going on."
+
+Primary action:
+Ask/send
+
+For Discover:
+
+Primary:
+"Explore support that may fit your situation."
+
+Primary action:
+Explore a benefit
+
+==================================================
+11. MAKE THE APP FEEL LESS LIKE A DATABASE
+==================================================
+
+The current app feels like:
+
+DATABASE → CARDS → DATABASE → CARDS
+
+I want:
+
+PERSON → STORY → GUIDANCE → ACTION
+
+The user should feel like Unione is accompanying them through a process.
+
+==================================================
+12. HOME SCREEN TARGET STRUCTURE
+==================================================
+
+Use approximately this structure:
+
+UNIONE
+Good morning, Sarah 👋
+Let's find the support that's right for you.
+
+[Beautiful subtle location/profile context]
+
+----------------------------
+
+YOUR UNIONE PATH
+
+01 Discover
+"Find support that may fit your situation."
+
+      ────────●────────○────────○
+           Discover  Understand Apply Track
+
+[ Continue your journey → ]
+
+----------------------------
+
+SUPPORT WE FOUND FOR YOU
+
+"Based on what you've told us"
+
+SNAP
+98% potential match
+"Why this may fit →"
+
+Medicaid
+95% potential match
+"Why this may fit →"
+
+[See all]
+
+----------------------------
+
+NOT SURE WHERE TO START?
+
+Beautiful Ask Unione visual
+
+"Tell me what's going on."
+
+[ Ask Unione → ]
+
+----------------------------
+
+Bottom navigation
+
+Home | Discover | Ask | Applications | Profile
+
+==================================================
+13. VISUAL DETAILS
+==================================================
+
+Use:
+- large typography
+- generous whitespace
+- soft pastel sections
+- subtle gradients only where useful
+- elegant illustrations
+- clean icons
+- smooth progress indicators
+- subtle animation
+- strong CTA buttons
+
+Avoid:
+- excessive borders
+- excessive rounded rectangles
+- dense text
+- tiny typography
+- too many badges
+- too many percentages
+- repetitive cards
+
+==================================================
+14. IMPORTANT — DO NOT BREAK FUNCTIONALITY
+==================================================
+
+Keep the existing navigation, dummy data, services and functionality.
+
+You are redesigning the EXPERIENCE and visual architecture.
+
+Do not remove:
+- Discover
+- Ask Unione
+- Applications
+- Profile
+- benefit details
+- mock recommendation data
+
+Refactor components if necessary.
+
+==================================================
+15. FINAL QUALITY BAR
+==================================================
+
+When I open the app, I should immediately feel:
+
+"This is a real startup product."
+
+NOT:
+
+"This is an AI-generated React Native template."
+
+The first 5 seconds should communicate:
+
+Unione understands me.
+↓
+Unione found possible support.
+↓
+Unione will guide me.
+↓
+I know what my next step is.
+
+Make the application emotionally positive and motivating.
+
+The app should make a user WANT to continue.
+
+After redesigning, run the application and check every screen on a phone-sized viewport.
+
+Fix spacing, typography, alignment, overflow, and navigation issues before finishing.
