@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollViewCompat } from '@/components/KeyboardAwareScrollViewCompat';
 import { DemoPill, SectionTitle, styles as ui } from '@/components/Ui';
 import { useUnione } from '@/context/UnioneContext';
 import { useColors } from '@/hooks/useColors';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 export default function ProfileScreen() {
   const colors = useColors();
-  const insets = useSafeAreaInsets();
+  const { width, fontScale, pagePadding, topContentPadding, tabScreenBottomPadding } = useResponsiveLayout();
+  const stackDetails = width <= 340 || fontScale >= 1.25;
   const { profile, setProfile, resetDemoState } = useUnione();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(profile);
@@ -48,7 +49,7 @@ export default function ProfileScreen() {
   return editing ? (
     <KeyboardAwareScrollViewCompat
       style={{ backgroundColor: colors.background }}
-      contentContainerStyle={[ui.content, { paddingTop: Math.max(insets.top + 16, 48), paddingBottom: Math.max(insets.bottom + 30, 50) }]}
+      contentContainerStyle={[ui.content, { paddingHorizontal: pagePadding, paddingTop: topContentPadding, paddingBottom: tabScreenBottomPadding }]}
       bottomOffset={80}
       keyboardShouldPersistTaps="handled"
     >
@@ -96,7 +97,7 @@ export default function ProfileScreen() {
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[
         ui.content,
-        { paddingTop: Math.max(insets.top + 16, 48), paddingBottom: Math.max(insets.bottom + 110, 130) },
+        { paddingHorizontal: pagePadding, paddingTop: topContentPadding, paddingBottom: tabScreenBottomPadding },
       ]}
       showsVerticalScrollIndicator={false}
     >
@@ -126,18 +127,23 @@ export default function ProfileScreen() {
 
       {/* PROFILE HERO */}
       <View style={[styles.profileHero, { backgroundColor: colors.primary }]}>
-        <View style={[styles.bigAvatar, { backgroundColor: colors.teal }]}>
-          <Text style={[styles.avatarText, { color: colors.primaryForeground }]}>
-            {getInitials(profile.name)}
-          </Text>
+        <View style={styles.identityRow}>
+          <View style={[styles.bigAvatar, { backgroundColor: 'rgba(255,255,255,0.16)' }]}>
+            <Text style={[styles.avatarText, { color: colors.primaryForeground }]}>
+              {getInitials(profile.name)}
+            </Text>
+          </View>
+          <View style={styles.identityCopy}>
+            <Text style={[ui.h2, styles.flexibleText, { color: colors.primaryForeground }]}>{profile.name}</Text>
+            <Text style={[ui.small, styles.flexibleText, { color: colors.primaryForeground, opacity: 0.86, marginTop: 4 }]}>
+              {profile.state} · Household {profile.householdSize}
+            </Text>
+            <Text style={[ui.small, styles.flexibleText, { color: colors.primaryForeground, opacity: 0.72, marginTop: 2 }]}>
+              ZIP {profile.zip} · {profile.employment}
+            </Text>
+          </View>
         </View>
-        <View style={{ flex: 1 }}>
-          <Text style={[ui.h2, { color: colors.primaryForeground }]}>{profile.name}</Text>
-          <Text style={[ui.small, { color: colors.primaryForeground, opacity: 0.8, marginTop: 4 }]}>
-            {profile.state} · {profile.zip}
-          </Text>
-        </View>
-        <DemoPill />
+        <View style={styles.heroBadgeRow}><DemoPill /></View>
       </View>
 
       {/* 1. MY INFORMATION */}
@@ -155,11 +161,12 @@ export default function ProfileScreen() {
               key={label}
               style={[
                 styles.infoLine,
+                stackDetails && styles.stackedInfoLine,
                 idx > 0 && { borderTopWidth: 1, borderTopColor: colors.border },
               ]}
             >
-              <Text style={[ui.small, { color: colors.mutedForeground }]}>{label}</Text>
-              <Text style={[ui.small, { color: colors.foreground, fontFamily: 'Inter_600SemiBold', maxWidth: '60%', textAlign: 'right' }]}>
+              <Text style={[ui.small, styles.infoLabel, { color: colors.mutedForeground }]}>{label}</Text>
+              <Text style={[ui.small, styles.infoValue, { color: colors.foreground, fontFamily: 'Inter_600SemiBold', textAlign: stackDetails ? 'left' : 'right' }]}>
                 {value}
               </Text>
             </View>
@@ -198,9 +205,10 @@ export default function ProfileScreen() {
         <SectionTitle title="Settings & System" />
         <View style={[styles.menuCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           {[
-            ['lock-closed-outline', 'Privacy & security', false],
+            ['lock-closed-outline', 'Trust & Security', false],
+            ['analytics-outline', 'Policy Insights', false],
+            ['business-outline', 'Institutional Impact', false],
             ['help-circle-outline', 'Help & support', false],
-            ['information-circle-outline', 'About Unione', false],
             ['refresh-outline', 'Reset demo state', true],
           ].map(([icon, label, isDestructive], idx) => (
             <Pressable
@@ -208,7 +216,13 @@ export default function ProfileScreen() {
               onPress={() =>
                 isDestructive
                   ? handleReset()
-                  : Alert.alert(label as string, 'This setting is ready for the future product flow.')
+                  : label === 'Trust & Security'
+                    ? router.push('/trust-security' as any)
+                    : label === 'Policy Insights'
+                      ? router.push('/policy-insights' as any)
+                      : label === 'Institutional Impact'
+                        ? router.push('/institutional-impact' as any)
+                        : Alert.alert(label as string, 'Support resources are represented as a future product flow in this prototype.')
               }
               style={({ pressed }) => [
                 styles.menuItem,
@@ -258,19 +272,27 @@ const styles = StyleSheet.create({
   },
   topEditNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   topAction: { minHeight: 44, minWidth: 44, alignItems: 'center', justifyContent: 'center' },
-  profileHero: { borderRadius: 22, padding: 18, flexDirection: 'row', alignItems: 'center', marginTop: 22, gap: 14 },
-  bigAvatar: { width: 52, height: 52, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  profileHero: { borderRadius: 22, padding: 18, marginTop: 22, gap: 14, overflow: 'hidden' },
+  identityRow: { flexDirection: 'row', alignItems: 'center', gap: 14, width: '100%' },
+  identityCopy: { flex: 1, minWidth: 0 },
+  flexibleText: { flexShrink: 1, minWidth: 0 },
+  bigAvatar: { width: 52, height: 52, flexBasis: 52, flexShrink: 0, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   avatarText: { fontFamily: 'Inter_700Bold', fontSize: 18 },
+  heroBadgeRow: { width: '100%', flexDirection: 'row', flexWrap: 'wrap' },
   infoCard: { borderWidth: 1, borderRadius: 20, paddingHorizontal: 16 },
-  infoLine: { minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  infoLine: { minHeight: 52, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+  stackedInfoLine: { flexDirection: 'column', alignItems: 'flex-start', gap: 3 },
+  infoLabel: { flex: 1, minWidth: 0 },
+  infoValue: { flex: 1, minWidth: 0 },
   menuCard: { borderWidth: 1, borderRadius: 20, paddingHorizontal: 16 },
-  menuItem: { minHeight: 56, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  menuItem: { minHeight: 56, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 12 },
   field: { marginBottom: 16 },
   input: {
-    height: 52,
+    minHeight: 52,
     borderWidth: 1,
     borderRadius: 14,
     paddingHorizontal: 14,
+    paddingVertical: 12,
     fontFamily: 'Inter_400Regular',
     fontSize: 15,
   },

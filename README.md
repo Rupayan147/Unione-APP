@@ -1,192 +1,216 @@
-# UNIONE — AI-Assisted Government Benefits Discovery and Utilization
+# UNIONE
 
-> **Find support. Understand your options. Take the next step.**
+**AI-Assisted Government Benefits Discovery & Access Platform**
 
-UNIONE is a modern mobile AI-assisted platform designed to help individuals and families discover, understand, and navigate government assistance programs across federal, state, and local levels.
+UNIONE is a React Native mobile prototype that helps people discover, understand, prepare for, review, and track potentially relevant government benefit programs through a human-centered experience.
 
----
+> **Current prototype:** bundled benefit information, local rule-based recommendations, deterministic Ask UNIONE guidance, local demo state, and simulated application workflows.
+>
+> **Planned production architecture:** secure backend services, verified live data sources, production authentication, institutional integrations, and retrieval-augmented AI. These capabilities are not live in the current repository.
 
-## 1. Executive Summary
+## Overview
 
-Navigating public assistance in the United States is notoriously complex, fragmented, and overwhelming. **UNIONE** simplifies this journey by acting as a personal, intelligent guide rather than a static database. 
+Public-benefit programs are distributed across agencies and portals, often with different eligibility language, evidence requirements, and processes. UNIONE explores how a single mobile experience could make those systems easier to navigate without making eligibility decisions or submitting information on a user's behalf.
 
-Through guided conversational onboarding, contextual benefit matching, structured AI assistance, and personal case tracking, UNIONE empowers users to discover programs they may qualify for and take actionable steps with confidence.
-
-> [!NOTE]
-> **Prototype & Demonstration Notice**: This repository contains the mobile client prototype built using **Expo**, **React Native**, **Expo Router**, and **TypeScript**. Current AI responses, benefit catalogs, and user state run locally via demonstration data services and `@react-native-async-storage/async-storage`.
-
----
-
-## 2. The Problem
-
-Every year, billions of dollars in government assistance (such as food support, healthcare coverage, housing assistance, and utility relief) go unclaimed because people:
-1. **Don't know programs exist**: Information is scattered across dozens of federal, state, county, and local agency websites.
-2. **Are confused by eligibility requirements**: Program guidelines use legal jargon and complex income thresholds that make self-assessment difficult.
-3. **Don't know what documents are required**: Missing paystubs, IDs, or proof of residency frequently lead to delayed or rejected applications.
-4. **Lack personal guidance**: Traditional portals require users to know what they are looking for rather than asking about their situation.
-
----
-
-## 3. Our Solution
-
-UNIONE replaces static search tables with an **action-oriented personal guide**. The app centers on cognitive ease, emotional positivity, and progressive information disclosure.
-
-```
-       [ USER ]
-          │
-          ▼
-┌───────────────────┐
-│ Profile Situation │ (State, ZIP, Household, Income, Employment)
-└─────────┬─────────┘
-          │
-          ▼
-┌───────────────────┐
-│ Personalized Home │ (Command Center, Priority Next Step, Match Scores)
-└─────────┬─────────┘
-          │
-    ┌─────┴─────────────────────┐
-    ▼                           ▼
-┌──────────────┐         ┌──────────────┐
-│ Ask Unione   │         │ Discover     │ (Filter by Food, Health, Housing, etc.)
-│ (AI Assistant)│        └──────┬───────┘
-└──────┬───────┘                │
-       └────────────┬───────────┘
-                    │
-                    ▼
-          ┌───────────────────┐
-          │  Benefit Details  │ (Why Match, Requirements, Timeline, Agency Link)
-          └─────────┬─────────┘
-                    │
-                    ▼
-          ┌───────────────────┐
-          │ Application Tracker│ (Step Progress, Action Needed Alerts)
-          └───────────────────┘
-```
-
----
-
-## 4. Key Implemented Features
-
-| Feature | Description | Implementation Status |
-| :--- | :--- | :--- |
-| **Guided Onboarding** | 4-step conversational setup capturing age, location, household size, employment status, and annual income. | **Implemented** (Local State) |
-| **Home Command Center** | Personalized dashboard with greeting, context pill (*California • Household of 4*), Ask Unione Hero, Priority Next Step, and Top Recommended Programs. | **Implemented** |
-| **Ask Unione (AI Assistant)** | Conversational assistant offering structured responses, suggested questions, **Relevant Benefit Cards**, *"Why this applies"* explanations, and agency source tags. | **Implemented** (Mock AI Engine) |
-| **Discover & Search** | Live search bar with instant clear, horizontal category chips (*Food, Healthcare, Housing, Employment, Financial, Utilities*), and dynamic section grouping. | **Implemented** |
-| **Benefit Details** | Program breakdown featuring match score assessment (*"98% potential match"*), document checklist, step-by-step application timeline, and official agency website linking. | **Implemented** |
-| **Personal Case Tracker** | Status tracking dashboard with progress bars, status badges (*Action Required*, *Under Review*, *Submitted*), and highlighted **Action Needed** alert banners. | **Implemented** |
-| **Profile & Settings** | User profile manager with initials avatar, grouped information cards, saved benefit links, and a one-tap **Reset Demo State** option. | **Implemented** (AsyncStorage) |
-
----
-
-## 5. Technology Stack
-
-### Mobile Client
-- **Framework**: [Expo SDK 54](https://expo.dev/) with New Architecture enabled (`newArchEnabled: true`)
-- **Core Library**: [React Native 0.81.5](https://reactnative.dev/)
-- **Routing Engine**: [Expo Router v6](https://docs.expo.dev/router/introduction/) (File-based typed routing)
-- **Language**: [TypeScript 5.9](https://www.typescriptlang.org/)
-- **UI Components**: Vanilla React Native `StyleSheet`, Custom Design Tokens, `@expo/vector-icons` (Ionicons)
-- **Keyboard Handling**: `react-native-keyboard-controller` & Native `Keyboard` listeners
-- **State & Persistence**: React Context API (`UnioneContext.tsx`) + `@react-native-async-storage/async-storage`
-- **Compiler**: React Compiler enabled (`babel-plugin-react-compiler`)
-
----
-
-## 6. Project Structure
+## Core user journey
 
 ```text
-d:\Unione\
-├── package.json                   # Root monorepo workspace configuration
-├── pnpm-workspace.yaml            # PNPM workspace definition
-├── README.md                      # Project documentation
-└── artifacts/
-    └── unione-mobile/             # Expo React Native application package
-        ├── app/                   # Expo Router screens & layouts
-        │   ├── _layout.tsx        # Root Stack & UnioneProvider wrapper
-        │   ├── index.tsx          # Splash, Welcome & Onboarding flow
-        │   ├── (tabs)/            # Main bottom tabs group
-        │   │   ├── _layout.tsx    # Bottom Tab Navigation layout
-        │   │   ├── index.tsx      # Home Command Center screen
-        │   │   ├── discover.tsx   # Benefit Discovery & Search screen
-        │   │   ├── ask.tsx        # Ask Unione AI Assistant screen
-        │   │   ├── applications.tsx # Case Tracker dashboard screen
-        │   │   └── profile.tsx    # User Profile & Settings screen
-        │   ├── benefit/[id].tsx   # Dynamic Benefit Detail view
-        │   └── application/[id].tsx # Dynamic Application Timeline view
-        ├── components/            # Reusable UI components & design system
-        │   ├── Ui.tsx             # Design tokens, PrimaryButton, StatusPill, MatchBar
-        │   ├── BenefitCard.tsx    # Program card component
-        │   └── KeyboardAwareScrollViewCompat.tsx
-        ├── constants/
-        │   └── colors.ts          # Semantic color token definitions
-        ├── context/
-        │   └── UnioneContext.tsx  # Application global state & storage hydration
-        ├── data/
-        │   └── mockData.ts        # Demo programs (SNAP, Medicaid, WIC, Lifeline, TANF)
-        ├── hooks/
-        │   └── useColors.ts       # Color scheme hook
-        └── services/
-            ├── aiService.ts       # Mock conversational AI logic
-            └── benefitService.ts  # Benefit recommendation engine & search
+Discover -> Understand -> Prepare / Apply -> Review & Attest -> Track
 ```
 
----
+- **Discover:** search a structured catalog and view potential matches.
+- **Understand:** review program descriptions, requirements, sources, and match reasoning.
+- **Prepare:** organize profile information, documents, and next steps.
+- **Review & Attest:** inspect mapped information and explicitly authorize the next action.
+- **Track:** follow illustrative application stages and action items.
 
-## 7. Local Development Setup
+## Prototype features
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [PNPM](https://pnpm.io/) package manager (`npm install -g pnpm`)
-- [Expo Go](https://expo.dev/go) app installed on a physical iOS or Android phone
+- Onboarding and locally persisted demo profile
+- Structured catalog of 70 benefit programs across eight categories
+- Transparent, rule-based recommendation scoring
+- Benefit search, category filters, and detailed program pages
+- Deterministic Ask UNIONE guidance using the bundled catalog
+- Demo application preparation and progress tracking
+- Review & Attest flow with mapping review, integrity checks, attestations, and local signature records
+- Human-in-the-loop safety: AI suggests, the user reviews, and the user authorizes
+- Trust & Security, Policy Insights, and Institutional Impact information screens
+- Responsive layouts for common Android phone widths and accessibility font scaling
+- Bundled local illustrations and app assets
 
-### Quick Start Instructions
+## Product areas
 
-1. **Clone the repository and install dependencies**:
-   ```powershell
-   git clone <repository-url>
-   cd Unione
-   pnpm install
-   ```
+| Area | Purpose |
+| --- | --- |
+| Home | Personalized next steps, recommendations, journey progress, and quick actions |
+| Discover | Search and browse the benefit catalog |
+| Ask | Prototype conversational guidance backed by local rules and catalog content |
+| Applications | Demo preparation status, timelines, and required actions |
+| Profile | User context, preferences, and links to trust and institutional concepts |
+| Benefit details | Program requirements, potential-match reasoning, and official source links |
+| Review & Attest | User-controlled mapping review, confirmation, and authorization |
+| Policy Insights | Illustrative, privacy-preserving institutional insight concepts |
 
-2. **Run TypeScript verification**:
-   ```powershell
-   pnpm --filter ./artifacts/unione-mobile run typecheck
-   ```
+## Technology stack
 
-3. **Start the Expo Metro Development Server**:
-   ```powershell
-   pnpm --filter @workspace/unione-mobile exec expo start -c
-   ```
+| Layer | Repository version / implementation |
+| --- | --- |
+| Mobile framework | Expo SDK 54 (`expo ~54.0.27`) |
+| Native runtime | React Native `0.81.5` |
+| UI | React `19.1.0`, React Native `StyleSheet`, Expo Vector Icons |
+| Navigation | Expo Router `~6.0.17` |
+| Language | TypeScript `~5.9.2` in the mobile package |
+| Local persistence | React Context and AsyncStorage `2.2.0` |
+| Workspace | pnpm workspaces, pinned to pnpm `11.21.0` |
 
-4. **Run on Physical Device**:
-   - Open **Expo Go** on your physical iPhone or Android phone.
-   - Scan the QR code printed in your terminal.
-   - The application bundle will load directly onto your device!
+## Architecture
 
----
+### Current prototype
 
-## 8. Data & Mock Architecture
+```text
+Expo / React Native Mobile Application
+                  |
+                  v
+       React Context + AsyncStorage
+                  |
+                  v
+      Structured Demo Benefit Catalog
+                  |
+                  v
+ Rule-Based Recommendations + Local Ask Logic
+                  |
+                  v
+   Demo Preparation, Review, and Tracking UI
+```
 
-- **`UnioneContext.tsx`**: Manages global application state (`profile`, `hasOnboarded`, `chatMessages`, `applications`). Persists state to `@react-native-async-storage/async-storage` under key `'unione-demo-state'`.
-- **`mockData.ts`**: Contains realistic demo program profiles for SNAP (CalFresh), Medicaid (Medi-Cal), WIC, Lifeline, Section 8, and TANF.
-- **`benefitService.ts`**: Calculates potential match percentages based on household size, income thresholds, and location.
-- **`aiService.ts`**: Simulates streaming structured AI guidance tailored to user queries.
+The mobile demo does not require the API server, a database, localhost, API keys, or environment variables.
 
----
+### Planned production architecture
 
-## 9. Planned / Future Implementation
+```text
+Mobile App
+    |
+    v
+Secure API Backend + Authentication
+    |
+    v
+Encrypted PostgreSQL / Document Storage
+    |
+    v
+Recommendation and Validation Services
+    |
+    v
+RAG / Vector Search Layer
+    |
+    v
+Verified Government and Institutional Sources
+```
 
-While the current prototype fully demonstrates the mobile user experience, future production versions will include:
+All components in this second diagram are planned production concepts, not claims about the current deployment.
 
-- **Live LLM Integration**: Connecting `askUnione` to a secure serverless LLM backend with retrieval-augmented generation (RAG) over verified federal/state benefit policy databases.
-- **Official API Integrations**: Syncing program requirements and real-time status updates with Benefits.gov and state agency APIs.
-- **OCR Document Scanner**: On-device camera scanning and document parsing for paystubs, tax forms, and photo IDs.
-- **Secure Authentication**: Biometric sign-in (FaceID/Fingerprint) and encrypted local storage for sensitive household data.
-- **Push Notifications**: Automated alerts when an application stage updates or additional documentation is requested by an agency.
+## Responsible assistance and human review
 
----
+UNIONE is designed around three steps:
 
-## 10. License
+```text
+AI SUGGESTS -> USER REVIEWS -> USER AUTHORIZES
+```
 
-This project is licensed under the MIT License.
+The current prototype never submits a government application. Potential-match scores are informational, users must review critical values, and the final action remains with the user and the official agency process.
+
+## Project structure
+
+```text
+Unione-APP/
+|-- artifacts/
+|   |-- unione-mobile/       # Expo Router mobile application
+|   |-- api-server/          # Optional backend workspace; not used by the mobile demo
+|   `-- mockup-sandbox/      # Supporting web mockup workspace
+|-- lib/
+|   |-- api-client-react/    # Shared API client package
+|   |-- api-spec/            # API specification tooling
+|   |-- api-zod/             # Shared schemas
+|   `-- db/                  # Optional PostgreSQL/Drizzle package
+|-- scripts/                 # Workspace utilities
+|-- package.json
+|-- pnpm-workspace.yaml
+|-- pnpm-lock.yaml
+`-- README.md
+```
+
+## New-PC setup
+
+For a complete Windows walkthrough—including prerequisites, Corepack, Expo Go, and troubleshooting—see [SETUP_NEW_PC.txt](./SETUP_NEW_PC.txt).
+
+Quick setup from the repository root:
+
+```powershell
+corepack enable
+corepack prepare pnpm@11.21.0 --activate
+pnpm install
+pnpm run typecheck
+```
+
+Recommended Node.js version: **22.18.0**. The repository accepts Node `>=20.19.4 <23` because React Native 0.81.5 requires Node 20.19.4 or newer.
+
+## Run the mobile app
+
+```powershell
+cd artifacts\unione-mobile
+npx expo start
+```
+
+Install Expo Go on a physical phone, keep the phone and PC on the same compatible network, and scan the QR code. Android Studio is not required for Expo Go testing. If LAN discovery is blocked, retry with:
+
+```powershell
+npx expo start --tunnel
+```
+
+Tunnel mode can be slower than LAN mode.
+
+> The package's `pnpm run dev` command is configured for its Replit environment. Use `npx expo start` for ordinary local Windows development.
+
+## Type checking
+
+Run the workspace-wide validation from the repository root:
+
+```powershell
+pnpm run typecheck
+```
+
+This checks shared TypeScript projects and every artifact that defines a `typecheck` script.
+
+## Optional Android APK build
+
+The checked-in `eas.json` includes a `preview` profile with internal distribution. After installing EAS CLI and signing in to an Expo account that has access to the configured EAS project:
+
+```powershell
+npm install --global eas-cli
+eas login
+eas build --platform android --profile preview
+```
+
+The preview profile produces an internally distributed Android APK. Expo Go remains the normal development and demo workflow; EAS is only needed for a standalone build.
+
+## Prototype disclaimer
+
+UNIONE is a demonstration project, not an official government service. Benefit information, recommendation scores, application records, signatures, and Policy Insights may be bundled, simulated, or illustrative. They are not eligibility determinations, legal advice, live government analytics, or proof of agency submission.
+
+Always review current requirements with the relevant official agency before applying.
+
+## Roadmap
+
+- Verified and versioned government-source ingestion
+- Secure production identity, consent, audit, and data-retention controls
+- Production backend and institutional integration layer
+- Retrieval-augmented assistance with source-quality evaluation
+- Document readiness and validation workflows
+- Accessibility, localization, and broader device testing
+
+## Development notes
+
+- Use pnpm from the repository root; do not create npm or Yarn lockfiles.
+- Keep `pnpm-lock.yaml` committed and synchronized with dependency changes.
+- The current mobile demo does not require the optional API server or PostgreSQL package.
+- Do not commit secrets or local `.env` files.
+- Run `pnpm run typecheck` before sharing changes.

@@ -1,12 +1,15 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { type Benefit } from '@/data/mockData';
+import { type Benefit, type BenefitCategory } from '@/data/mockData';
 import { styles as ui } from '@/components/Ui';
 import { useColors } from '@/hooks/useColors';
 
 export function BenefitCard({ benefit, onPress }: { benefit: Benefit; onPress: () => void }) {
   const colors = useColors();
+  const { width, fontScale } = useWindowDimensions();
+  const compact = width <= 360 || fontScale >= 1.2;
+  const categoryTheme = getCategoryTheme(benefit.category, colors);
 
   return (
     <Pressable
@@ -16,36 +19,59 @@ export function BenefitCard({ benefit, onPress }: { benefit: Benefit; onPress: (
       testID={`benefit-card-${benefit.id}`}
       style={({ pressed }) => [
         styles.card,
+        compact && styles.compactCard,
         { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.85 : 1 },
       ]}
     >
-      <View style={styles.topRow}>
-        <View style={[styles.icon, { backgroundColor: colors.secondary }]}>
-          <Ionicons name={iconForCategory(benefit.category)} size={22} color={colors.teal} />
+      {/* A fixed visual mark and flexible content keep long program names readable. */}
+      <View style={[styles.topRow, fontScale >= 1.4 && styles.stackedTopRow]}>
+        <View style={[styles.iconBox, compact && styles.compactIconBox, { backgroundColor: categoryTheme.bg }]}>
+          <Ionicons name={categoryTheme.icon} size={22} color={categoryTheme.fg} />
         </View>
 
-        <View style={styles.titleBlock}>
-          <View style={styles.titleTop}>
-            <Text style={[ui.h3, { color: colors.foreground }]}>{benefit.name}</Text>
+        <View style={[styles.contentColumn, fontScale >= 1.4 && styles.stackedContentColumn]}>
+          <View style={styles.badgeRow}>
+            <View style={[styles.categoryChip, { backgroundColor: categoryTheme.bg }]}>
+              <Text style={[styles.categoryChipText, { color: categoryTheme.fg }]}>{benefit.category}</Text>
+            </View>
             <View style={[styles.matchBadge, { backgroundColor: colors.accent }]}>
-              <Text style={[styles.matchText, { color: colors.teal }]}>
-                {benefit.potentialMatch}% match
-              </Text>
+              <Text style={[styles.matchText, { color: colors.teal }]}>{benefit.potentialMatch}% match</Text>
             </View>
           </View>
-          <Text style={[ui.small, { color: colors.mutedForeground, marginTop: 2 }]}>
+          <Text style={[ui.h3, styles.flexibleText, { color: colors.foreground, marginTop: 8 }]}>{benefit.name}</Text>
+          <Text style={[ui.small, styles.flexibleText, { color: colors.mutedForeground, marginTop: 2 }]}>
             {benefit.fullName}
+          </Text>
+          <Text style={[ui.body, styles.description, { color: colors.foreground }]} numberOfLines={compact ? 4 : 3}>
+            {benefit.description}
           </Text>
         </View>
       </View>
 
-      <Text style={[ui.body, { color: colors.mutedForeground, marginTop: 12, fontSize: 14, lineHeight: 20 }]} numberOfLines={2}>
-        {benefit.description}
-      </Text>
+      {/* TAGS ROW (if available) */}
+      {benefit.tags && benefit.tags.length > 0 ? (
+        <View style={styles.tagsRow}>
+          {benefit.tags.slice(0, 3).map((tag) => (
+            <View key={tag} style={[styles.tagPill, { backgroundColor: colors.secondary }]}>
+              <Text style={[styles.tagText, { color: colors.teal }]}>{tag}</Text>
+            </View>
+          ))}
+          {benefit.estimatedProcessingTime ? (
+            <View style={styles.metaRow}>
+              <Ionicons name="time-outline" size={12} color={colors.mutedForeground} />
+              <Text style={[styles.metaText, { color: colors.mutedForeground }]}>
+                {benefit.estimatedProcessingTime}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      ) : null}
 
-      <View style={styles.cardFooter}>
-        <View style={[styles.categoryChip, { backgroundColor: colors.secondary }]}>
-          <Text style={[styles.categoryChipText, { color: colors.teal }]}>{benefit.category}</Text>
+      {/* CARD FOOTER */}
+      <View style={[styles.cardFooter, { borderTopColor: colors.border }]}>
+        <View style={styles.footerMeta}>
+          <Ionicons name="shield-checkmark-outline" size={14} color={colors.mutedForeground} />
+          <Text style={[styles.metaText, styles.flexibleText, { color: colors.mutedForeground }]}>Review official requirements</Text>
         </View>
         <View style={styles.actionLink}>
           <Text style={[ui.small, { color: colors.teal, fontFamily: 'Inter_600SemiBold' }]}>
@@ -58,26 +84,50 @@ export function BenefitCard({ benefit, onPress }: { benefit: Benefit; onPress: (
   );
 }
 
-export function iconForCategory(category: string): keyof typeof Ionicons.glyphMap {
+export function iconForCategory(category: BenefitCategory | string): keyof typeof Ionicons.glyphMap {
   switch (category) {
-    case 'Food':
-      return 'restaurant-outline';
-    case 'Healthcare':
-      return 'heart-outline';
-    case 'Housing':
-      return 'home-outline';
     case 'Employment':
       return 'briefcase-outline';
+    case 'Healthcare':
+      return 'heart-outline';
+    case 'Food':
+      return 'restaurant-outline';
+    case 'Housing':
+      return 'home-outline';
     case 'Family':
       return 'people-outline';
-    case 'Financial':
-      return 'cash-outline';
     case 'Education':
       return 'school-outline';
+    case 'Financial':
+      return 'cash-outline';
     case 'Utilities':
       return 'flash-outline';
     default:
       return 'sparkles-outline';
+  }
+}
+
+export function getCategoryTheme(category: BenefitCategory | string, colors: any) {
+  const icon = iconForCategory(category);
+  switch (category) {
+    case 'Employment':
+      return { bg: colors.secondary, fg: colors.teal, icon };
+    case 'Healthcare':
+      return { bg: colors.accent, fg: colors.teal, icon };
+    case 'Food':
+      return { bg: `${colors.warning}1A`, fg: colors.warning, icon };
+    case 'Housing':
+      return { bg: colors.secondary, fg: colors.teal, icon };
+    case 'Education':
+      return { bg: colors.accent, fg: colors.navySoft, icon };
+    case 'Family':
+      return { bg: `${colors.teal}14`, fg: colors.teal, icon };
+    case 'Financial':
+      return { bg: colors.secondary, fg: colors.teal, icon };
+    case 'Utilities':
+      return { bg: `${colors.warning}18`, fg: colors.warning, icon };
+    default:
+      return { bg: colors.secondary, fg: colors.teal, icon };
   }
 }
 
@@ -88,22 +138,56 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
   },
-  topRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  icon: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  titleBlock: { flex: 1 },
-  titleTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
-  matchBadge: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: 99 },
-  matchText: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
+  compactCard: { padding: 14 },
+  topRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, width: '100%' },
+  stackedTopRow: { flexDirection: 'column' },
+  iconBox: { width: 48, height: 48, flexBasis: 48, flexShrink: 0, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  compactIconBox: { width: 42, height: 42, flexBasis: 42, borderRadius: 13 },
+  contentColumn: { flex: 1, minWidth: 0 },
+  stackedContentColumn: { flex: 0, width: '100%' },
+  badgeRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6 },
+  flexibleText: { flexShrink: 1, minWidth: 0 },
+  description: { marginTop: 9, fontSize: 14, lineHeight: 20 },
+  matchBadge: { paddingHorizontal: 9, paddingVertical: 5, borderRadius: 99, flexShrink: 0 },
+  matchText: { fontFamily: 'Inter_600SemiBold', fontSize: 11, flexShrink: 1 },
+  tagsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 10,
+  },
+  tagPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  tagText: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 11,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginLeft: 4,
+  },
+  metaText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 11,
+  },
   cardFooter: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 14,
+    gap: 8,
+    marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F3',
   },
-  categoryChip: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 99 },
-  categoryChipText: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
-  actionLink: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  categoryChip: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 99, flexShrink: 1, maxWidth: '100%' },
+  categoryChipText: { fontFamily: 'Inter_600SemiBold', fontSize: 11, flexShrink: 1 },
+  footerMeta: { flex: 1, minWidth: 140, flexDirection: 'row', alignItems: 'center', gap: 5 },
+  actionLink: { flexDirection: 'row', alignItems: 'center', gap: 4, flexShrink: 0 },
 });

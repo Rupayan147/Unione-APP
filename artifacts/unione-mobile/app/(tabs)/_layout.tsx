@@ -1,9 +1,10 @@
 import React from 'react';
-import { Platform, StyleSheet, useColorScheme, View } from 'react-native';
+import { Platform, StyleSheet, useColorScheme, useWindowDimensions, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Feather } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 export default function TabLayout() {
   const colors = useColors();
@@ -11,6 +12,8 @@ export default function TabLayout() {
   const isDark = colorScheme === 'dark';
   const isIOS = Platform.OS === 'ios';
   const isWeb = Platform.OS === 'web';
+  const { width } = useWindowDimensions();
+  const { safeBottom, tabBarHeight } = useResponsiveLayout();
   const icon = (name: React.ComponentProps<typeof Feather>['name']) => ({ color }: { color: string }) => (
     <Feather name={name} size={21} color={color} />
   );
@@ -21,13 +24,19 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.mutedForeground,
         headerShown: false,
+        tabBarHideOnKeyboard: true,
+        tabBarAllowFontScaling: false,
+        tabBarLabelStyle: { fontSize: width <= 340 ? 9 : 10, lineHeight: 13, fontFamily: 'Inter_500Medium' },
+        tabBarItemStyle: { minWidth: 0, paddingTop: 5 },
         tabBarStyle: {
           position: 'absolute',
+          height: isWeb ? 76 : tabBarHeight,
+          paddingBottom: isWeb ? 8 : safeBottom,
+          paddingTop: 2,
           backgroundColor: isIOS ? 'transparent' : colors.background,
           borderTopWidth: isWeb ? 1 : 0,
           borderTopColor: colors.border,
           elevation: 0,
-          ...(isWeb ? { height: 84 } : {}),
         },
         tabBarBackground: () =>
           isIOS ? (

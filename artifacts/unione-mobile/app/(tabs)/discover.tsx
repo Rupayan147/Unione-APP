@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BenefitCard } from '@/components/BenefitCard';
 import { EmptyState, DemoPill, styles as ui } from '@/components/Ui';
 import { categories, type Benefit, type BenefitCategory } from '@/data/mockData';
 import { searchBenefits } from '@/services/benefitService';
 import { useColors } from '@/hooks/useColors';
+import { SectionIllustration, APP_IMAGES, getCategoryVisual } from '@/components/SectionIllustration';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 export default function DiscoverScreen() {
   const colors = useColors();
-  const insets = useSafeAreaInsets();
+  const { pagePadding, topContentPadding, tabScreenBottomPadding } = useResponsiveLayout();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<BenefitCategory | undefined>();
   const [results, setResults] = useState<Benefit[]>([]);
@@ -40,7 +41,7 @@ export default function DiscoverScreen() {
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[
         ui.content,
-        { paddingTop: Math.max(insets.top + 16, 48), paddingBottom: Math.max(insets.bottom + 110, 130) },
+        { paddingHorizontal: pagePadding, paddingTop: topContentPadding, paddingBottom: tabScreenBottomPadding },
       ]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
@@ -56,9 +57,17 @@ export default function DiscoverScreen() {
         </View>
       </View>
 
-      <Text style={[ui.body, { color: colors.mutedForeground, marginTop: 6 }]}>
+      <Text style={[ui.body, { color: colors.mutedForeground, marginTop: 6, marginBottom: 16 }]}>
         Explore programs that may support your household.
       </Text>
+
+      {/* HEADER VISUAL */}
+      <SectionIllustration
+        source={category ? (getCategoryVisual(category) || APP_IMAGES.benefitsDiscovery) : APP_IMAGES.benefitsDiscovery}
+        aspectRatio={2.4}
+        badgeText={category ? `${category.toUpperCase()} SUPPORT` : 'BENEFITS DISCOVERY'}
+        style={{ marginBottom: 16 }}
+      />
 
       {/* SEARCH BAR */}
       <View style={[styles.searchShell, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -82,7 +91,8 @@ export default function DiscoverScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoriesContainer}
+        style={{ marginHorizontal: -pagePadding }}
+        contentContainerStyle={[styles.categoriesContainer, { paddingHorizontal: pagePadding }]}
       >
         <Pressable
           onPress={() => setCategory(undefined)}
@@ -159,8 +169,8 @@ export default function DiscoverScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  headerTagRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', minWidth: 0 },
+  headerTagRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 10 },
   searchShell: {
     minHeight: 52,
     borderRadius: 16,
@@ -171,8 +181,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     gap: 10,
   },
-  searchInput: { flex: 1, fontFamily: 'Inter_400Regular', fontSize: 15 },
-  categoriesContainer: { gap: 8, paddingVertical: 18 },
+  searchInput: { flex: 1, minWidth: 0, fontFamily: 'Inter_400Regular', fontSize: 15 },
+  categoriesContainer: { gap: 8, paddingVertical: 18, alignItems: 'center' },
   chip: {
     borderWidth: 1,
     borderRadius: 99,
@@ -182,6 +192,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  listHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
+  listHeader: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
   skeletonContainer: { alignItems: 'center', justifyContent: 'center' },
 });

@@ -13,6 +13,7 @@ import {
 } from '@expo-google-fonts/inter';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { UnioneProvider } from '@/context/UnioneContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -27,6 +28,10 @@ function RootLayoutNav() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="benefit/[id]" options={{ headerShown: false }} />
       <Stack.Screen name="application/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="application/review/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="trust-security" options={{ headerShown: false }} />
+      <Stack.Screen name="policy-insights" options={{ headerShown: false }} />
+      <Stack.Screen name="institutional-impact" options={{ headerShown: false }} />
     </Stack>
   );
 }
@@ -49,9 +54,10 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
+      <StatusBar style="dark" />
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
-          <GestureHandlerRootView>
+          <GestureHandlerRootView style={{ flex: 1 }}>
             <KeyboardProvider>
               <UnioneProvider>
                 <RootLayoutNav />

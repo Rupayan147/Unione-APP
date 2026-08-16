@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollViewCompat } from '@/components/KeyboardAwareScrollViewCompat';
@@ -8,11 +8,15 @@ import { demoProfile, type Benefit, type UserProfile } from '@/data/mockData';
 import { useUnione } from '@/context/UnioneContext';
 import { getPersonalizedBenefits } from '@/services/benefitService';
 import { useColors } from '@/hooks/useColors';
+import { iconForCategory } from '@/components/BenefitCard';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 type EntryPhase = 'splash' | 'welcome' | 'profile' | 'options' | 'ready';
 
 export default function Onboarding() {
   const colors = useColors();
+  const { width, fontScale, pagePadding, safeTop, safeBottom } = useResponsiveLayout();
+  const compactTypography = width <= 340 || fontScale >= 1.2;
   const { hasOnboarded, completeOnboarding, isHydrating } = useUnione();
   const [phase, setPhase] = useState<EntryPhase>('splash');
   const [form, setForm] = useState<UserProfile>(demoProfile);
@@ -93,7 +97,10 @@ export default function Onboarding() {
           <View style={[styles.backdropOrbLarge, { backgroundColor: colors.secondary }]} />
           <View style={[styles.backdropOrbSmall, { backgroundColor: colors.accent }]} />
         </View>
-        <View style={styles.welcomeContent}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[styles.welcomeContent, styles.balancedWelcomeContent, { paddingHorizontal: pagePadding, paddingTop: safeTop + 20, paddingBottom: safeBottom + 20 }]}
+        >
           <View style={styles.welcomeTop}>
             <View style={[styles.mark, { backgroundColor: colors.primary }]}>
               <Ionicons name="link-outline" size={27} color={colors.primaryForeground} />
@@ -101,8 +108,8 @@ export default function Onboarding() {
             <Text style={[styles.brand, { color: colors.foreground }]}>UNIONE</Text>
           </View>
 
-          <View style={styles.welcomeBody}>
-            <Text style={[ui.h1, { color: colors.foreground, fontSize: 38, lineHeight: 44 }]}>
+          <View style={[styles.welcomeBody, styles.welcomeHeroBody]}>
+            <Text style={[ui.h1, { color: colors.foreground, fontSize: compactTypography ? 31 : 38, lineHeight: compactTypography ? 38 : 44 }]}>
               Finding support{`\n`}shouldn’t feel overwhelming.
             </Text>
             <Text style={[ui.body, { color: colors.mutedForeground, marginTop: 16, maxWidth: 340 }]}>
@@ -125,7 +132,7 @@ export default function Onboarding() {
               <Text style={[styles.secondaryButtonText, { color: colors.foreground }]}>Sign in</Text>
             </Pressable>
           </View>
-        </View>
+        </ScrollView>
       </View>
     );
   }
@@ -134,7 +141,7 @@ export default function Onboarding() {
     return (
       <KeyboardAwareScrollViewCompat
         style={{ backgroundColor: colors.background }}
-        contentContainerStyle={[styles.formContent, { paddingTop: 56, paddingBottom: 32 }]}
+        contentContainerStyle={[styles.formContent, { paddingHorizontal: pagePadding, paddingTop: safeTop + 16, paddingBottom: safeBottom + 24 }]}
         bottomOffset={90}
         keyboardShouldPersistTaps="handled"
       >
@@ -193,7 +200,10 @@ export default function Onboarding() {
           <View style={[styles.backdropOrbLarge, { backgroundColor: colors.secondary }]} />
           <View style={[styles.backdropOrbSmall, { backgroundColor: colors.accent }]} />
         </View>
-        <View style={styles.welcomeContent}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[styles.flowContent, { paddingHorizontal: pagePadding, paddingTop: safeTop + 16, paddingBottom: safeBottom + 20 }]}
+        >
           <View style={styles.stepHeader}>
             <Pressable onPress={() => setPhase('profile')} hitSlop={10} style={styles.backRow}>
               <Ionicons name="arrow-back" size={18} color={colors.foreground} />
@@ -215,21 +225,28 @@ export default function Onboarding() {
                 key={benefit.id}
                 style={[
                   styles.optionRow,
+                  compactTypography && styles.compactOptionRow,
                   index > 0 && { borderTopWidth: 1, borderTopColor: colors.border },
                 ]}
               >
                 <View
                   style={[
                     styles.optionIcon,
+                    compactTypography && styles.compactOptionIcon,
                     { backgroundColor: index === 0 ? colors.secondary : colors.accent },
                   ]}
                 >
-                  <Text style={[ui.small, { color: colors.teal }]}>{benefit.name}</Text>
+                  <Ionicons name={iconForCategory(benefit.category)} size={23} color={colors.teal} />
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={styles.optionCopy}>
+                  <View style={[styles.categoryPill, { backgroundColor: colors.secondary }]}>
+                    <Text style={[styles.categoryPillText, { color: colors.teal }]}>{benefit.category}</Text>
+                  </View>
                   <View style={styles.optionTop}>
-                    <Text style={[ui.h3, { color: colors.foreground }]}>{benefit.name}</Text>
-                    <Text style={[ui.small, { color: colors.teal }]}>{benefit.potentialMatch}% match</Text>
+                    <Text style={[ui.h3, styles.flexibleText, { color: colors.foreground }]}>{benefit.name}</Text>
+                    <View style={[styles.matchPill, { backgroundColor: colors.accent }]}>
+                      <Text style={[ui.small, { color: colors.teal, fontFamily: 'Inter_600SemiBold' }]}>{benefit.potentialMatch}% match</Text>
+                    </View>
                   </View>
                   <Text style={[ui.small, { color: colors.mutedForeground, marginTop: 3 }]}>
                     {benefit.fullName}
@@ -239,10 +256,10 @@ export default function Onboarding() {
             ))}
           </View>
 
-          <PrimaryButton onPress={() => setPhase('ready')} icon="arrow-forward">
+          <PrimaryButton onPress={() => setPhase('ready')} icon="arrow-forward" style={styles.flowAction}>
             Get your next step
           </PrimaryButton>
-        </View>
+        </ScrollView>
       </View>
     );
   }
@@ -253,7 +270,10 @@ export default function Onboarding() {
         <View style={[styles.backdropOrbLarge, { backgroundColor: colors.secondary }]} />
         <View style={[styles.backdropOrbSmall, { backgroundColor: colors.accent }]} />
       </View>
-      <View style={styles.welcomeContent}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[styles.flowContent, { paddingHorizontal: pagePadding, paddingTop: safeTop + 16, paddingBottom: safeBottom + 20 }]}
+      >
         <View style={styles.stepHeader}>
           <Pressable onPress={() => setPhase('options')} hitSlop={10} style={styles.backRow}>
             <Ionicons name="arrow-back" size={18} color={colors.foreground} />
@@ -271,26 +291,26 @@ export default function Onboarding() {
         </Text>
 
         <View style={[styles.readyCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <SummaryLine label="Location" value={`${form.state} · ${form.zip}`} />
-          <SummaryLine label="Household" value={`${form.householdSize} people · ${form.children} children`} />
-          <SummaryLine label="Employment" value={form.employment} />
-          <SummaryLine label="Income" value={`${form.income} / year`} />
+          <SummaryLine label="Location" value={`${form.state} · ${form.zip}`} stacked={compactTypography} />
+          <SummaryLine label="Household" value={`${form.householdSize} people · ${form.children} children`} stacked={compactTypography} />
+          <SummaryLine label="Employment" value={form.employment} stacked={compactTypography} />
+          <SummaryLine label="Income" value={`${form.income} / year`} stacked={compactTypography} />
         </View>
 
-        <PrimaryButton onPress={completeAndEnterHome} icon="arrow-forward">
+        <PrimaryButton onPress={completeAndEnterHome} icon="arrow-forward" style={styles.flowAction}>
           See my options
         </PrimaryButton>
-      </View>
+      </ScrollView>
     </View>
   );
 }
 
-function SummaryLine({ label, value }: { label: string; value: string }) {
+function SummaryLine({ label, value, stacked = false }: { label: string; value: string; stacked?: boolean }) {
   const colors = useColors();
   return (
-    <View style={[styles.summaryLine, { borderTopColor: colors.border }]}>
-      <Text style={[ui.small, { color: colors.mutedForeground }]}>{label}</Text>
-      <Text style={[ui.small, { color: colors.foreground, textAlign: 'right', flex: 1, marginLeft: 15 }]}>
+    <View style={[styles.summaryLine, stacked && styles.stackedSummaryLine, { borderTopColor: colors.border }]}>
+      <Text style={[ui.small, styles.summaryLabel, { color: colors.mutedForeground }]}>{label}</Text>
+      <Text style={[ui.small, styles.summaryValue, { color: colors.foreground, textAlign: stacked ? 'left' : 'right' }]}>
         {value}
       </Text>
     </View>
@@ -308,26 +328,40 @@ const styles = StyleSheet.create({
   backdrop: { ...StyleSheet.absoluteFillObject },
   backdropOrbLarge: { position: 'absolute', right: -56, top: 120, width: 220, height: 220, borderRadius: 110, opacity: 0.46 },
   backdropOrbSmall: { position: 'absolute', left: -34, bottom: 140, width: 132, height: 132, borderRadius: 66, opacity: 0.5 },
-  welcomeContent: { flex: 1, paddingHorizontal: 24, paddingTop: 56, paddingBottom: 28, justifyContent: 'space-between' },
+  welcomeContent: { flexGrow: 1, width: '100%' },
+  balancedWelcomeContent: { justifyContent: 'flex-start' },
+  flowContent: { flexGrow: 1, width: '100%' },
   welcomeTop: { gap: 15 },
   mark: { width: 53, height: 53, borderRadius: 17, justifyContent: 'center', alignItems: 'center' },
   brand: { fontFamily: 'Inter_700Bold', fontSize: 12, letterSpacing: 3.2 },
-  welcomeBody: { marginTop: 6 },
+  welcomeBody: { marginTop: 22 },
+  welcomeHeroBody: { flexGrow: 1, justifyContent: 'center', paddingVertical: 24 },
   welcomeActions: { gap: 12 },
   secondaryButton: { minHeight: 54, borderWidth: 1, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   secondaryButtonText: { fontFamily: 'Inter_600SemiBold', fontSize: 15 },
   formContent: { paddingHorizontal: 24 },
-  stepHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  stepHeader: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between', alignItems: 'center' },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 7, alignSelf: 'flex-start', paddingVertical: 6, paddingRight: 4 },
   fieldGrid: { marginTop: 22 },
   field: { marginBottom: 14 },
-  input: { height: 52, borderWidth: 1, borderRadius: 14, paddingHorizontal: 15, fontFamily: 'Inter_400Regular', fontSize: 15 },
+  input: { minHeight: 52, borderWidth: 1, borderRadius: 14, paddingHorizontal: 15, paddingVertical: 12, fontFamily: 'Inter_400Regular', fontSize: 15 },
   summaryCard: { borderRadius: 20, padding: 16, marginTop: 22 },
   optionStack: { borderWidth: 1, borderRadius: 20, marginTop: 22, overflow: 'hidden' },
-  optionRow: { padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  optionIcon: { width: 54, height: 54, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
-  optionTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 },
+  optionRow: { padding: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  compactOptionRow: { padding: 13, gap: 10 },
+  optionIcon: { width: 50, height: 50, flexBasis: 50, flexShrink: 0, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  compactOptionIcon: { width: 42, height: 42, flexBasis: 42, borderRadius: 14 },
+  optionCopy: { flex: 1, minWidth: 0 },
+  flexibleText: { flex: 1, minWidth: 0, flexShrink: 1 },
+  categoryPill: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 99, marginBottom: 6 },
+  categoryPillText: { fontFamily: 'Inter_600SemiBold', fontSize: 10, flexShrink: 1 },
+  optionTop: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: 7 },
+  matchPill: { borderRadius: 99, paddingHorizontal: 8, paddingVertical: 3, flexShrink: 0 },
+  flowAction: { marginTop: 22 },
   readyMark: { width: 66, height: 66, borderRadius: 22, justifyContent: 'center', alignItems: 'center', marginTop: 4 },
   readyCard: { borderWidth: 1, borderRadius: 20, paddingHorizontal: 16, marginTop: 22 },
-  summaryLine: { borderTopWidth: 1, paddingVertical: 12, flexDirection: 'row', alignItems: 'center' },
+  summaryLine: { borderTopWidth: 1, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  stackedSummaryLine: { flexDirection: 'column', alignItems: 'flex-start', gap: 4 },
+  summaryLabel: { flex: 1, minWidth: 0 },
+  summaryValue: { flex: 1.4, minWidth: 0 },
 });

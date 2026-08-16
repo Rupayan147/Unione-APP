@@ -54,3 +54,6 @@ Thumbs.db
 .env.*
 !.env.example
 
+
+# Original source artwork
+/Images/

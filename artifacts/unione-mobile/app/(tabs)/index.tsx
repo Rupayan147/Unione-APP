@@ -2,17 +2,21 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUnione } from '@/context/UnioneContext';
 import { useColors } from '@/hooks/useColors';
 import { getPersonalizedBenefits, type BenefitRecommendation } from '@/services/benefitService';
 import { styles as ui } from '@/components/Ui';
+import { SectionIllustration, APP_IMAGES } from '@/components/SectionIllustration';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 export default function HomeScreen() {
   console.log('[UNIONE DEBUG] HOME SCREEN MOUNTED');
   const colors = useColors();
-  const insets = useSafeAreaInsets();
+  const { width, fontScale, pagePadding, topContentPadding, tabScreenBottomPadding } = useResponsiveLayout();
   const { profile, applications } = useUnione();
+  const stackQuickActions = width <= 340 || fontScale >= 1.3;
+  const compactJourney = width <= 400 || fontScale >= 1.1;
+  const stackJourney = fontScale >= 1.4;
 
   const [recommendations, setRecommendations] = useState<BenefitRecommendation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,7 +102,8 @@ export default function HomeScreen() {
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={[
         styles.content,
-        { paddingTop: Math.max(insets.top + 16, 52), paddingBottom: Math.max(insets.bottom + 110, 130) },
+        { paddingHorizontal: pagePadding },
+        { paddingTop: topContentPadding, paddingBottom: tabScreenBottomPadding },
       ]}
       showsVerticalScrollIndicator={false}
     >
@@ -110,9 +115,9 @@ export default function HomeScreen() {
       >
         {/* 1. HEADER & PROFILE CONTEXT */}
         <View style={styles.header}>
-          <View>
+          <View style={styles.headerCopy}>
             <Text style={[styles.brandText, { color: colors.teal }]}>UNIONE</Text>
-            <Text style={[ui.h1, { color: colors.foreground, marginTop: 4 }]}>
+            <Text style={[ui.h1, width <= 340 && styles.compactTitle, { color: colors.foreground, marginTop: 4 }]}>
               Good morning, {firstName} 👋
             </Text>
             <Text style={[ui.body, { color: colors.mutedForeground, marginTop: 4 }]}>
@@ -130,6 +135,12 @@ export default function HomeScreen() {
 
         {/* 2. HERO — ASK UNIONE */}
         <View style={[styles.heroCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <SectionIllustration
+            source={APP_IMAGES.hero}
+            aspectRatio={2.5}
+            badgeText="DISCOVER RESOURCES"
+            style={{ marginBottom: 16 }}
+          />
           <View style={styles.heroHeader}>
             <Animated.View
               style={[
@@ -178,7 +189,7 @@ export default function HomeScreen() {
             <View style={[styles.nextStepIcon, { backgroundColor: colors.card }]}>
               <Ionicons name="arrow-forward-circle-outline" size={24} color={colors.teal} />
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={styles.sectionCopy}>
               <Text style={[styles.nextStepTag, { color: colors.teal }]}>ACTION RECOMMENDED</Text>
               <Text style={[ui.h3, { color: colors.foreground, marginTop: 2 }]}>{nextStepTitle}</Text>
               <Text style={[ui.small, { color: colors.mutedForeground, marginTop: 4, lineHeight: 18 }]}>
@@ -204,7 +215,7 @@ export default function HomeScreen() {
 
         {/* 4. PERSONALIZED BENEFITS ("POTENTIAL SUPPORT FOR YOU") */}
         <View style={styles.sectionHeader}>
-          <View>
+          <View style={styles.sectionCopy}>
             <Text style={[ui.h3, { color: colors.foreground }]}>Potential support for you</Text>
             <Text style={[ui.small, { color: colors.mutedForeground, marginTop: 2 }]}>
               Based on what you’ve shared
@@ -247,7 +258,7 @@ export default function HomeScreen() {
                   </View>
                 </View>
 
-                <Text style={[ui.h3, { color: colors.foreground, marginTop: 12 }]}>
+                <Text style={[ui.h3, styles.flexibleText, { color: colors.foreground, marginTop: 12 }]}>
                   {item.benefit.name}
                 </Text>
                 <Text style={[ui.small, { color: colors.mutedForeground, marginTop: 2 }]}>
@@ -289,7 +300,7 @@ export default function HomeScreen() {
         {/* 5. SMALL PROGRESS JOURNEY */}
         <View style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.progressTopRow}>
-            <View>
+            <View style={styles.sectionCopy}>
               <Text style={[ui.h3, { color: colors.foreground }]}>Your Unione journey</Text>
               <Text style={[ui.small, { color: colors.mutedForeground, marginTop: 2 }]}>
                 2 of 4 steps complete
@@ -301,15 +312,24 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <View style={styles.journeyStepsRow}>
-            <JourneyStep label="Discover" status="done" colors={colors} />
-            <StepDivider colors={colors} active />
-            <JourneyStep label="Understand" status="done" colors={colors} />
-            <StepDivider colors={colors} active />
-            <JourneyStep label="Apply" status="active" colors={colors} />
-            <StepDivider colors={colors} active={false} />
-            <JourneyStep label="Track" status="pending" colors={colors} />
-          </View>
+          {compactJourney ? (
+            <View style={styles.compactJourneyGrid}>
+              <JourneyStep label="Discover" status="done" colors={colors} compact stacked={stackJourney} />
+              <JourneyStep label="Understand" status="done" colors={colors} compact stacked={stackJourney} />
+              <JourneyStep label="Apply" status="active" colors={colors} compact stacked={stackJourney} />
+              <JourneyStep label="Track" status="pending" colors={colors} compact stacked={stackJourney} />
+            </View>
+          ) : (
+            <View style={styles.journeyStepsRow}>
+              <JourneyStep label="Discover" status="done" colors={colors} />
+              <StepDivider colors={colors} active />
+              <JourneyStep label="Understand" status="done" colors={colors} />
+              <StepDivider colors={colors} active />
+              <JourneyStep label="Apply" status="active" colors={colors} />
+              <StepDivider colors={colors} active={false} />
+              <JourneyStep label="Track" status="pending" colors={colors} />
+            </View>
+          )}
         </View>
 
         {/* 6. QUICK ACTIONS */}
@@ -323,26 +343,44 @@ export default function HomeScreen() {
             label="Explore benefits"
             onPress={() => router.push('/(tabs)/discover')}
             colors={colors}
+            stacked={stackQuickActions}
           />
           <QuickActionChip
             icon="sparkles-outline"
             label="Ask Unione"
             onPress={() => router.push('/(tabs)/ask')}
             colors={colors}
+            stacked={stackQuickActions}
           />
           <QuickActionChip
             icon="document-text-outline"
             label="Applications"
             onPress={() => router.push('/(tabs)/applications')}
             colors={colors}
+            stacked={stackQuickActions}
           />
           <QuickActionChip
             icon="person-outline"
             label="Update profile"
             onPress={() => router.push('/(tabs)/profile')}
             colors={colors}
+            stacked={stackQuickActions}
           />
         </View>
+
+        <Pressable
+          onPress={() => router.push('/trust-security' as any)}
+          style={({ pressed }) => [styles.trustCard, { backgroundColor: colors.secondary, borderColor: colors.border, opacity: pressed ? 0.8 : 1 }]}
+        >
+          <View style={[styles.trustIcon, { backgroundColor: colors.card }]}>
+            <Ionicons name="shield-checkmark-outline" size={20} color={colors.teal} />
+          </View>
+          <View style={styles.sectionCopy}>
+            <Text style={[ui.h3, { color: colors.foreground }]}>You’re always in control</Text>
+            <Text style={[ui.small, { color: colors.mutedForeground, marginTop: 3, lineHeight: 18 }]}>AI can help prepare information. Nothing is submitted without your review and authorization.</Text>
+            <Text style={[ui.link, { color: colors.teal, marginTop: 8 }]}>Learn about UNIONE safety →</Text>
+          </View>
+        </Pressable>
       </Animated.View>
     </ScrollView>
   );
@@ -352,16 +390,20 @@ function JourneyStep({
   label,
   status,
   colors,
+  compact = false,
+  stacked = false,
 }: {
   label: string;
   status: 'done' | 'active' | 'pending';
   colors: any;
+  compact?: boolean;
+  stacked?: boolean;
 }) {
   const isDone = status === 'done';
   const isActive = status === 'active';
 
   return (
-    <View style={styles.stepItem}>
+    <View style={[styles.stepItem, compact && styles.compactStepItem, stacked && styles.stackedStepItem]}>
       <View
         style={[
           styles.stepDot,
@@ -385,7 +427,7 @@ function JourneyStep({
             fontSize: 11,
             color: isDone || isActive ? colors.foreground : colors.mutedForeground,
             fontFamily: isDone || isActive ? 'Inter_600SemiBold' : 'Inter_400Regular',
-            marginTop: 4,
+            marginTop: compact ? 0 : 4,
           },
         ]}
       >
@@ -411,11 +453,13 @@ function QuickActionChip({
   label,
   onPress,
   colors,
+  stacked,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
   onPress: () => void;
   colors: any;
+  stacked: boolean;
 }) {
   return (
     <Pressable
@@ -424,13 +468,14 @@ function QuickActionChip({
       accessibilityLabel={label}
       style={({ pressed }) => [
         styles.quickChip,
+        stacked && styles.stackedQuickChip,
         { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.75 : 1 },
       ]}
     >
       <View style={[styles.quickChipIconBox, { backgroundColor: colors.secondary }]}>
         <Ionicons name={icon} size={18} color={colors.teal} />
       </View>
-      <Text style={[ui.small, { color: colors.foreground, fontFamily: 'Inter_600SemiBold' }]}>
+      <Text style={[ui.small, styles.quickChipLabel, { color: colors.foreground, fontFamily: 'Inter_600SemiBold' }]}>
         {label}
       </Text>
     </Pressable>
@@ -440,6 +485,10 @@ function QuickActionChip({
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: 20 },
+  headerCopy: { minWidth: 0 },
+  sectionCopy: { flex: 1, minWidth: 0 },
+  flexibleText: { minWidth: 0, flexShrink: 1 },
+  compactTitle: { fontSize: 27, lineHeight: 33 },
   header: { gap: 12 },
   brandText: { fontFamily: 'Inter_700Bold', fontSize: 12, letterSpacing: 3 },
   contextBadge: {
@@ -451,8 +500,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 99,
     marginTop: 4,
+    maxWidth: '100%',
+    flexShrink: 1,
   },
-  contextText: { fontFamily: 'Inter_600SemiBold', fontSize: 12 },
+  contextText: { fontFamily: 'Inter_600SemiBold', fontSize: 12, flexShrink: 1 },
   heroCard: {
     borderRadius: 24,
     borderWidth: 1,
@@ -478,6 +529,8 @@ const styles = StyleSheet.create({
   heroButtonText: { fontFamily: 'Inter_600SemiBold', fontSize: 15 },
   sectionHeader: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     marginTop: 26,
@@ -505,10 +558,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 18,
   },
-  recTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  categoryBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 99 },
-  categoryText: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
-  matchBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 99 },
+  recTopRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 6 },
+  categoryBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 99, flexShrink: 1 },
+  categoryText: { fontFamily: 'Inter_600SemiBold', fontSize: 11, flexShrink: 1 },
+  matchBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 99, flexShrink: 0 },
   matchText: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
   cardFooterAction: { marginTop: 14, alignSelf: 'flex-start' },
   skeletonContainer: { gap: 14 },
@@ -521,7 +574,7 @@ const styles = StyleSheet.create({
     padding: 18,
     marginTop: 26,
   },
-  progressTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  progressTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
   progressCountBadge: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center' },
   progressCountText: { fontFamily: 'Inter_700Bold', fontSize: 13 },
   journeyStepsRow: {
@@ -531,7 +584,10 @@ const styles = StyleSheet.create({
     marginTop: 18,
     paddingHorizontal: 4,
   },
-  stepItem: { alignItems: 'center', flex: 1 },
+  compactJourneyGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 18 },
+  compactStepItem: { flexBasis: '46%', flexGrow: 1, flexDirection: 'row', justifyContent: 'flex-start', gap: 8, minWidth: 0 },
+  stackedStepItem: { flexBasis: '100%' },
+  stepItem: { alignItems: 'center', flex: 1, minWidth: 0 },
   stepDot: { width: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
   activeInnerDot: { width: 6, height: 6, borderRadius: 3 },
   stepDividerLine: { flex: 1, height: 2, marginBottom: 16, marginHorizontal: -4 },
@@ -541,7 +597,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   quickChip: {
-    width: '48%',
+    flexGrow: 1,
+    flexBasis: '46%',
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
@@ -550,5 +608,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
   },
+  stackedQuickChip: { flexBasis: '100%' },
   quickChipIconBox: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  quickChipLabel: { flex: 1, minWidth: 0 },
+  trustCard: { marginTop: 16, borderWidth: 1, borderRadius: 20, padding: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  trustIcon: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
 });

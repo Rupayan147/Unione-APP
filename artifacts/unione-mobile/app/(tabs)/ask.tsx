@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Keyboard, Platform, Pressable, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DemoPill, styles as ui } from '@/components/Ui';
 import { askUnione } from '@/services/aiService';
 import { useUnione } from '@/context/UnioneContext';
 import { getBenefit, type ChatMessage } from '@/data/mockData';
 import { useColors } from '@/hooks/useColors';
+import { SectionIllustration, APP_IMAGES } from '@/components/SectionIllustration';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 const suggestedPrompts = [
   "I'm recently unemployed. What support should I explore?",
@@ -19,12 +20,12 @@ const suggestedPrompts = [
 
 export default function AskScreen() {
   const colors = useColors();
-  const insets = useSafeAreaInsets();
+  const { width, fontScale, pagePadding, topContentPadding, tabBarHeight } = useResponsiveLayout();
+  const compactHeader = width <= 340 || fontScale >= 1.25;
   const { chatMessages, addChatMessages } = useUnione();
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const tabInset = Platform.OS === 'web' ? 68 : 60;
 
   useEffect(() => {
     const showSub = Keyboard.addListener(
@@ -55,7 +56,7 @@ export default function AskScreen() {
 
   const composerBottomPadding = keyboardVisible
     ? Platform.OS === 'ios' ? 8 : 12
-    : Math.max(insets.bottom + 8, 16) + tabInset;
+    : tabBarHeight + 8;
 
   return (
     <KeyboardAvoidingView
@@ -64,7 +65,7 @@ export default function AskScreen() {
       keyboardVerticalOffset={0}
     >
       {/* HEADER */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top + 16, 48) }]}>
+      <View style={[styles.header, { paddingHorizontal: pagePadding, paddingTop: topContentPadding }]}>
         <View style={styles.headerCopy}>
           <View style={styles.headerTagRow}>
             <Text style={[ui.small, { color: colors.teal, letterSpacing: 1.3 }]}>AI ASSISTANT</Text>
@@ -76,11 +77,11 @@ export default function AskScreen() {
           </Text>
         </View>
 
-        <View style={[styles.aiAvatar, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
+        {!compactHeader ? <View style={[styles.aiAvatar, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
           <View style={[styles.avatarHalo, { backgroundColor: colors.accent }]}>
             <Ionicons name="sparkles" size={24} color={colors.teal} />
           </View>
-        </View>
+        </View> : null}
       </View>
 
       {/* MESSAGES LIST */}
@@ -89,12 +90,18 @@ export default function AskScreen() {
         keyExtractor={(item) => item.id}
         keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={[styles.chatListContent, { paddingBottom: 20 }]}
+        contentContainerStyle={[styles.chatListContent, { paddingHorizontal: pagePadding, paddingBottom: 20 }]}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <MessageBubble item={item} />}
         ListHeaderComponent={
           chatMessages.length <= 1 ? (
             <View style={styles.suggestedSection}>
+              <SectionIllustration
+                source={APP_IMAGES.aiAssistant}
+                aspectRatio={2.4}
+                badgeText="INTELLIGENT ASSISTANCE"
+                style={{ marginBottom: 16 }}
+              />
               <Text style={[ui.small, { color: colors.mutedForeground, marginBottom: 12 }]}>
                 SUGGESTED QUESTIONS
               </Text>
@@ -136,7 +143,7 @@ export default function AskScreen() {
       <View
         style={[
           styles.inputWrap,
-          { backgroundColor: colors.background, borderTopColor: colors.border, paddingBottom: composerBottomPadding },
+          { paddingHorizontal: Math.max(pagePadding - 4, 12), backgroundColor: colors.background, borderTopColor: colors.border, paddingBottom: composerBottomPadding },
         ]}
       >
         <View style={[styles.inputShell, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -250,7 +257,7 @@ function MessageBubble({ item }: { item: ChatMessage }) {
                   <View style={[styles.miniIcon, { backgroundColor: colors.card }]}>
                     <Ionicons name="checkmark-circle-outline" size={18} color={colors.teal} />
                   </View>
-                  <View style={{ flex: 1 }}>
+                  <View style={styles.flexibleContent}>
                     <Text style={[ui.small, { color: colors.foreground, fontFamily: 'Inter_600SemiBold', fontSize: 13 }]}>
                       {benefit.name}
                     </Text>
@@ -322,8 +329,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  headerCopy: { flex: 1, paddingRight: 16 },
-  headerTagRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 2 },
+  headerCopy: { flex: 1, minWidth: 0, paddingRight: 8 },
+  headerTagRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 10, marginBottom: 2 },
   aiAvatar: {
     width: 62,
     height: 62,
@@ -355,7 +362,8 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
   },
   assistantBubble: {
-    maxWidth: '96%',
+    width: '100%',
+    maxWidth: '100%',
     padding: 18,
     borderRadius: 22,
     borderBottomLeftRadius: 4,
@@ -374,6 +382,7 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 8,
   },
+  flexibleContent: { flex: 1, minWidth: 0 },
   miniIcon: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   infoBlock: { borderRadius: 14, padding: 14 },
   blockTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -382,10 +391,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 10,
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     alignItems: 'center',
   },
-  officialTag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  officialTag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, flexShrink: 0 },
   typingCard: {
     alignSelf: 'flex-start',
     borderWidth: 1,
@@ -411,6 +421,7 @@ const styles = StyleSheet.create({
   attachBtn: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   input: {
     flex: 1,
+    minWidth: 0,
     maxHeight: 100,
     fontFamily: 'Inter_400Regular',
     fontSize: 15,

@@ -2,6 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { applications as demoApplications, demoProfile, type Application, type ChatMessage, type UserProfile } from '@/data/mockData';
 
+export interface ApplicationReviewRecord {
+  applicationId: string;
+  signedName: string;
+  signedAt: string;
+  reference: string;
+  authorized: true;
+}
+
 interface UnioneContextValue {
   profile: UserProfile;
   setProfile: (profile: UserProfile) => void;
@@ -10,6 +18,8 @@ interface UnioneContextValue {
   applications: Application[];
   chatMessages: ChatMessage[];
   addChatMessages: (messages: ChatMessage[]) => void;
+  reviewRecords: Record<string, ApplicationReviewRecord>;
+  recordApplicationReview: (applicationId: string, signedName: string) => ApplicationReviewRecord;
   isHydrating: boolean;
   resetDemoState: () => void;
 }
@@ -28,6 +38,7 @@ export function UnioneProvider({ children }: { children: ReactNode }) {
       text: 'Welcome to Ask Unione. I can help you understand your potential matches, documents, and next steps. I use demo knowledge in this prototype, so eligibility is never guaranteed.',
     },
   ]);
+  const [reviewRecords, setReviewRecords] = useState<Record<string, ApplicationReviewRecord>>({});
   const [isHydrating, setIsHydrating] = useState(true);
 
   useEffect(() => {
@@ -38,11 +49,12 @@ export function UnioneProvider({ children }: { children: ReactNode }) {
           console.log('[UNIONE DEBUG] No persisted state found. Defaulting hasOnboarded=false');
           return;
         }
-        const saved = JSON.parse(raw) as Partial<{ profile: UserProfile; hasOnboarded: boolean; chatMessages: ChatMessage[] }>;
+        const saved = JSON.parse(raw) as Partial<{ profile: UserProfile; hasOnboarded: boolean; chatMessages: ChatMessage[]; reviewRecords: Record<string, ApplicationReviewRecord> }>;
         console.log('[UNIONE DEBUG] Persisted state loaded:', saved);
         if (saved.profile) setProfileState(saved.profile);
         if (saved.hasOnboarded) setHasOnboarded(true);
         if (saved.chatMessages?.length) setChatMessages(saved.chatMessages);
+        if (saved.reviewRecords) setReviewRecords(saved.reviewRecords);
       })
       .catch((err) => console.log('[UNIONE DEBUG] Storage load error:', err))
       .finally(() => {
@@ -51,8 +63,8 @@ export function UnioneProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  const persist = (nextProfile: UserProfile, nextHasOnboarded: boolean, nextChat: ChatMessage[]) => {
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ profile: nextProfile, hasOnboarded: nextHasOnboarded, chatMessages: nextChat })).catch(() => undefined);
+  const persist = (nextProfile: UserProfile, nextHasOnboarded: boolean, nextChat: ChatMessage[], nextReviews = reviewRecords) => {
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ profile: nextProfile, hasOnboarded: nextHasOnboarded, chatMessages: nextChat, reviewRecords: nextReviews })).catch(() => undefined);
   };
 
   const setProfile = (nextProfile: UserProfile) => {
@@ -71,6 +83,7 @@ export function UnioneProvider({ children }: { children: ReactNode }) {
     console.log('[UNIONE DEBUG] Resetting demo state');
     setProfileState(demoProfile);
     setHasOnboarded(false);
+    setReviewRecords({});
     AsyncStorage.removeItem(STORAGE_KEY).catch(() => undefined);
   };
 
@@ -82,9 +95,25 @@ export function UnioneProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const recordApplicationReview = (applicationId: string, signedName: string) => {
+    const record: ApplicationReviewRecord = {
+      applicationId,
+      signedName: signedName.trim(),
+      signedAt: new Date().toISOString(),
+      reference: `UNI-${applicationId.toUpperCase().replace(/[^A-Z0-9]/g, '-').slice(0, 18)}`,
+      authorized: true,
+    };
+    setReviewRecords((current) => {
+      const next = { ...current, [applicationId]: record };
+      persist(profile, hasOnboarded, chatMessages, next);
+      return next;
+    });
+    return record;
+  };
+
   const value = useMemo(
-    () => ({ profile, setProfile, hasOnboarded, completeOnboarding, applications, chatMessages, addChatMessages, isHydrating, resetDemoState }),
-    [profile, hasOnboarded, applications, chatMessages, isHydrating],
+    () => ({ profile, setProfile, hasOnboarded, completeOnboarding, applications, chatMessages, addChatMessages, reviewRecords, recordApplicationReview, isHydrating, resetDemoState }),
+    [profile, hasOnboarded, applications, chatMessages, reviewRecords, isHydrating],
   );
 
   return <UnioneContext.Provider value={value}>{children}</UnioneContext.Provider>;

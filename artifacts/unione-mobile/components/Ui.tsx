@@ -12,7 +12,7 @@ export function SectionTitle({ title, action, onAction }: { title: string; actio
   const colors = useColors();
   return (
     <View style={styles.sectionTitle}>
-      <Text style={[styles.h3, { color: colors.foreground }]}>{title}</Text>
+      <Text style={[styles.h3, styles.flexibleText, { color: colors.foreground }]}>{title}</Text>
       {action && onAction ? (
         <Pressable onPress={onAction} accessibilityRole="button" hitSlop={10}>
           <Text style={[styles.link, { color: colors.teal }]}>{action}</Text>
@@ -79,10 +79,10 @@ export function ProgressBar({ value, color }: { value: number; color?: string })
 export function StatusPill({ status }: { status: string }) {
   const colors = useColors();
   const isAction = status === 'Action required';
-  const isSubmitted = status === 'Submitted';
+  const isReviewComplete = status === 'Review complete';
   return (
-    <View style={[styles.statusPill, { backgroundColor: isAction ? `${colors.warning}22` : isSubmitted ? `${colors.teal}18` : colors.secondary }]}>
-      <Text style={[styles.statusText, { color: isAction ? colors.warning : isSubmitted ? colors.teal : colors.secondaryForeground }]}>{status}</Text>
+    <View style={[styles.statusPill, { backgroundColor: isAction ? `${colors.warning}22` : isReviewComplete ? `${colors.teal}18` : colors.secondary }]}>
+      <Text style={[styles.statusText, { color: isAction ? colors.warning : isReviewComplete ? colors.teal : colors.secondaryForeground }]}>{status}</Text>
     </View>
   );
 }
@@ -102,34 +102,39 @@ export function MatchBar({ score }: { score: number }) {
   const colors = useColors();
   return (
     <View style={styles.matchRow}>
-      <ProgressBar value={score} />
-      <Text style={[styles.small, { color: colors.teal, minWidth: 73, textAlign: 'right' }]}>{score}% potential match</Text>
+      <View style={styles.matchTrack}>
+        <ProgressBar value={score} />
+      </View>
+      <Text style={[styles.small, styles.matchLabel, { color: colors.teal }]}>{score}% potential match</Text>
     </View>
   );
 }
 
 export const styles = StyleSheet.create({
   screen: { flex: 1 },
-  content: { paddingHorizontal: 20, paddingBottom: 120 },
-  sectionTitle: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  h1: { fontFamily: 'Inter_700Bold', fontSize: 31, lineHeight: 37, letterSpacing: -0.7 },
-  h2: { fontFamily: 'Inter_700Bold', fontSize: 25, lineHeight: 31, letterSpacing: -0.5 },
-  h3: { fontFamily: 'Inter_600SemiBold', fontSize: 17, lineHeight: 23 },
-  body: { fontFamily: 'Inter_400Regular', fontSize: 15, lineHeight: 22 },
-  small: { fontFamily: 'Inter_500Medium', fontSize: 12, lineHeight: 17, letterSpacing: 0.1 },
-  link: { fontFamily: 'Inter_600SemiBold', fontSize: 13 },
-  primaryButton: { minHeight: 54, borderRadius: 16, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9 },
-  primaryButtonText: { fontFamily: 'Inter_600SemiBold', fontSize: 15 },
+  content: { paddingHorizontal: 20, width: '100%', maxWidth: '100%' },
+  flexibleText: { flexShrink: 1, minWidth: 0 },
+  sectionTitle: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 12 },
+  h1: { fontFamily: 'Inter_700Bold', fontSize: 31, lineHeight: 37, letterSpacing: -0.7, flexShrink: 1 },
+  h2: { fontFamily: 'Inter_700Bold', fontSize: 25, lineHeight: 31, letterSpacing: -0.5, flexShrink: 1 },
+  h3: { fontFamily: 'Inter_600SemiBold', fontSize: 17, lineHeight: 23, flexShrink: 1 },
+  body: { fontFamily: 'Inter_400Regular', fontSize: 15, lineHeight: 22, flexShrink: 1 },
+  small: { fontFamily: 'Inter_500Medium', fontSize: 12, lineHeight: 17, letterSpacing: 0.1, flexShrink: 1 },
+  link: { fontFamily: 'Inter_600SemiBold', fontSize: 13, flexShrink: 1 },
+  primaryButton: { minHeight: 54, borderRadius: 16, paddingHorizontal: 18, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, maxWidth: '100%' },
+  primaryButtonText: { fontFamily: 'Inter_600SemiBold', fontSize: 15, flexShrink: 1, minWidth: 0, textAlign: 'center' },
   iconButton: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  demoPill: { alignSelf: 'flex-start', borderRadius: 99, paddingHorizontal: 9, paddingVertical: 6, flexDirection: 'row', gap: 6, alignItems: 'center' },
+  demoPill: { alignSelf: 'flex-start', maxWidth: '100%', borderRadius: 99, paddingHorizontal: 9, paddingVertical: 6, flexDirection: 'row', gap: 6, alignItems: 'center', flexShrink: 1 },
   demoDot: { width: 6, height: 6, borderRadius: 3 },
-  demoPillText: { fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 0.6 },
+  demoPillText: { fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 0.6, flexShrink: 1 },
   progressTrack: { height: 6, borderRadius: 99, overflow: 'hidden' },
   progressFill: { height: 6, borderRadius: 99 },
-  statusPill: { borderRadius: 99, paddingHorizontal: 9, paddingVertical: 5, alignSelf: 'flex-start' },
-  statusText: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
+  statusPill: { borderRadius: 99, paddingHorizontal: 9, paddingVertical: 5, alignSelf: 'flex-start', flexShrink: 1, maxWidth: '100%' },
+  statusText: { fontFamily: 'Inter_600SemiBold', fontSize: 11, flexShrink: 1, minWidth: 0 },
   emptyState: { borderWidth: 1, borderRadius: 16, padding: 28, alignItems: 'center', gap: 7 },
   emptyTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 16, marginTop: 3 },
   emptyDetail: { fontFamily: 'Inter_400Regular', fontSize: 13, lineHeight: 19, textAlign: 'center' },
-  matchRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  matchRow: { flexDirection: 'row', alignItems: 'center', gap: 10, width: '100%' },
+  matchTrack: { flex: 1, minWidth: 40 },
+  matchLabel: { flexShrink: 1, textAlign: 'right' },
 });

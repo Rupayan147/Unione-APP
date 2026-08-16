@@ -2,15 +2,17 @@ import React from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconButton, PrimaryButton, ProgressBar, StatusPill, styles as ui } from '@/components/Ui';
 import { getApplication, getBenefit, type Application } from '@/data/mockData';
 import { useUnione } from '@/context/UnioneContext';
 import { useColors } from '@/hooks/useColors';
+import { SectionIllustration, APP_IMAGES } from '@/components/SectionIllustration';
+import { AssistancePrinciple } from '@/components/ApplicationIntegrity';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 export default function ApplicationDetailScreen() {
   const colors = useColors();
-  const insets = useSafeAreaInsets();
+  const { pagePadding, detailTopPadding, stickyActionBottomPadding, stickyActionScrollPadding } = useResponsiveLayout();
   const { id, benefitId } = useLocalSearchParams<{ id: string; benefitId?: string }>();
   const { applications } = useUnione();
 
@@ -25,8 +27,9 @@ export default function ApplicationDetailScreen() {
       { label: 'Profile information', status: 'complete' },
       { label: 'Eligibility verification', status: 'action' },
       { label: 'Document upload', status: 'pending' },
-      { label: 'Application submission', status: 'pending' },
-      { label: 'Agency determination', status: 'pending' },
+      { label: 'Review & Attest', status: 'pending' },
+      { label: 'Official application', status: 'pending' },
+      { label: 'Track updates', status: 'pending' },
     ],
   };
 
@@ -54,7 +57,7 @@ export default function ApplicationDetailScreen() {
       <ScrollView
         contentContainerStyle={[
           ui.content,
-          { paddingTop: Math.max(insets.top + 14, 46), paddingBottom: 130 },
+          { paddingHorizontal: pagePadding, paddingTop: detailTopPadding, paddingBottom: stickyActionScrollPadding },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -76,6 +79,17 @@ export default function ApplicationDetailScreen() {
             background={colors.card}
           />
         </View>
+
+        {isAction ? (
+          <Pressable
+            onPress={handleAction}
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.uploadAction, { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.78 : 1 }]}
+          >
+            <Ionicons name="cloud-upload-outline" size={19} color={colors.teal} />
+            <Text style={[ui.small, styles.flexibleText, { color: colors.teal, fontFamily: 'Inter_600SemiBold' }]}>Attach the requested demo document</Text>
+          </Pressable>
+        ) : null}
 
         {/* HERO TITLE */}
         <Text style={[ui.h1, { color: colors.foreground, marginTop: 22 }]}>{benefit.name}</Text>
@@ -128,6 +142,19 @@ export default function ApplicationDetailScreen() {
               {application.nextStep}
             </Text>
           </View>
+        </View>
+
+        {/* PROCESS VISUAL */}
+        <SectionIllustration
+          source={isAction ? APP_IMAGES.documentProcessing : APP_IMAGES.applicationSteps}
+          aspectRatio={2.4}
+          badgeText={isAction ? 'VERIFICATION PROCESS' : 'STEP-BY-STEP GUIDANCE'}
+          style={{ marginTop: 18 }}
+        />
+
+        <View style={styles.assistanceSection}>
+          <Text style={[ui.h3, { color: colors.foreground, marginBottom: 12 }]}>UNIONE assistance</Text>
+          <AssistancePrinciple />
         </View>
 
         {/* TIMELINE PROGRESS NODES */}
@@ -205,9 +232,7 @@ export default function ApplicationDetailScreen() {
                       ? 'Completed'
                       : isStepAction
                         ? 'Action required'
-                        : item.label === 'Agency determination'
-                          ? 'Pending review'
-                          : 'Upcoming'}
+                        : 'Upcoming'}
                   </Text>
                 </View>
               </View>
@@ -227,12 +252,16 @@ export default function ApplicationDetailScreen() {
           {
             backgroundColor: colors.background,
             borderTopColor: colors.border,
-            paddingBottom: Math.max(insets.bottom + 10, 16),
+            paddingHorizontal: pagePadding,
+            paddingBottom: stickyActionBottomPadding,
           },
         ]}
       >
-        <PrimaryButton onPress={handleAction} icon={isAction ? 'cloud-upload-outline' : 'arrow-forward'}>
-          {isAction ? 'Upload required document' : 'View application status'}
+        <PrimaryButton
+          onPress={() => router.push(`/application/review/${application.id}?benefitId=${application.benefitId}` as any)}
+          icon="shield-checkmark-outline"
+        >
+          Review & Attest
         </PrimaryButton>
       </View>
     </View>
@@ -241,9 +270,12 @@ export default function ApplicationDetailScreen() {
 
 const styles = StyleSheet.create({
   nav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  demoBadge: { borderRadius: 99, paddingHorizontal: 12, paddingVertical: 6 },
-  statusHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 22, marginBottom: 10 },
-  nextBanner: { borderRadius: 18, borderWidth: 1, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 20 },
+  demoBadge: { borderRadius: 99, paddingHorizontal: 12, paddingVertical: 6, flexShrink: 1, maxWidth: '55%' },
+  statusHeader: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between', alignItems: 'center', marginTop: 22, marginBottom: 10 },
+  nextBanner: { borderRadius: 18, borderWidth: 1, padding: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginTop: 20 },
+  uploadAction: { minHeight: 48, borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 10 },
+  flexibleText: { flexShrink: 1, minWidth: 0 },
+  assistanceSection: { marginTop: 24 },
   timelineSection: { marginTop: 28 },
   timelineRow: { flexDirection: 'row', gap: 14 },
   lineWrap: { alignItems: 'center', width: 24 },

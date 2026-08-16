@@ -1,0 +1,286 @@
+UNIONE - NEW WINDOWS PC SETUP
+====================================
+
+QUICK START (Git, Node 22.18.0, and pnpm 11.21.0 already installed)
+-------------------------------------------------------------------------------
+Open PowerShell and run:
+
+git clone https://github.com/Rupayan147/Unione-APP.git
+cd Unione-APP
+pnpm install
+pnpm run typecheck
+cd artifacts\unione-mobile
+npx expo start
+
+Install Expo Go on the phone, keep the phone and PC on the same compatible
+network, and scan the QR code shown by Expo.
+
+
+A. REQUIRED SOFTWARE
+-------------------------------------------------------------------------------
+
+Required:
+
+1. Git for Windows
+   Download: https://git-scm.com/download/win
+   Or, if winget is available:
+   winget install --id Git.Git --exact
+
+2. Node.js 22.18.0 (recommended exact version)
+   The repository accepts Node >=20.19.4 and <23. Node 22.18.0 is the version
+   verified for this project and satisfies React Native 0.81.5's minimum.
+
+   Download the Node 22.18.0 Windows installer from the official Node.js site:
+   https://nodejs.org/download/release/v22.18.0/
+
+3. pnpm 11.21.0
+   This exact version is pinned in the root package.json. Corepack, included
+   with the recommended Node release, is the preferred installer.
+
+4. Expo Go on the Android or iOS phone used for testing
+   Install Expo Go from the phone's official app store.
+
+Optional:
+
+- Visual Studio Code: https://code.visualstudio.com/
+- Windows Terminal
+- Android Studio, but only for an Android emulator. It is NOT required when
+  testing on a physical phone with Expo Go.
+- EAS CLI and an Expo account, only for standalone APK builds.
+
+
+B. CLONE THE PROJECT
+-------------------------------------------------------------------------------
+
+Open PowerShell in the folder where the project should live:
+
+git clone https://github.com/Rupayan147/Unione-APP.git
+cd Unione-APP
+
+Git creates a folder named "Unione-APP" by default. All workspace commands in
+this guide that use pnpm must be run from that repository root unless a section
+explicitly changes directories.
+
+
+C. SET UP THE PACKAGE MANAGER
+-------------------------------------------------------------------------------
+
+From the repository root:
+
+corepack enable
+corepack prepare pnpm@11.21.0 --activate
+pnpm --version
+
+Expected pnpm version:
+
+11.21.0
+
+Do not use npm install or yarn install in this workspace. The repository uses
+pnpm workspaces and the committed pnpm-lock.yaml file.
+
+
+D. INSTALL DEPENDENCIES
+-------------------------------------------------------------------------------
+
+Run once from the repository root:
+
+pnpm install
+
+Do not run separate installs inside each artifact. The root install links the
+mobile app and shared workspace packages correctly.
+
+
+E. ENVIRONMENT VARIABLES
+-------------------------------------------------------------------------------
+
+No environment variables are required for the current local UNIONE mobile demo.
+
+The mobile app uses:
+
+- bundled demo benefit data
+- local rule-based recommendation and Ask UNIONE logic
+- AsyncStorage/local demo state
+- bundled images and illustrations
+
+It does not require localhost, PostgreSQL, API keys, or the API server.
+
+Optional backend development is separate from the mobile setup. The API/database
+workspace requires DATABASE_URL, and the API server requires PORT. Do not create
+or expose those values unless you are intentionally developing that optional
+backend. Local .env files are ignored by Git.
+
+
+F. VERIFY THE INSTALLATION
+-------------------------------------------------------------------------------
+
+From the repository root:
+
+node --version
+pnpm --version
+pnpm run typecheck
+
+Recommended/expected versions:
+
+Node: v22.18.0
+pnpm: 11.21.0
+
+The typecheck command validates the shared libraries and artifact workspaces,
+including the Expo mobile application.
+
+You can also run the guided setup script from the repository root:
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
+
+The Bypass setting above applies only to that new PowerShell process. It does
+not change the machine's global execution policy.
+
+
+G. RUN THE MOBILE APP WITH EXPO GO
+-------------------------------------------------------------------------------
+
+From the repository root:
+
+cd artifacts\unione-mobile
+npx expo start
+
+Then:
+
+1. Open Expo Go on the phone.
+2. Put the PC and phone on the same compatible Wi-Fi/LAN network.
+3. Scan the QR code shown in the terminal.
+4. Keep the terminal open while using the app.
+5. Stop Metro later with Ctrl+C.
+
+The checked-in "dev" package script contains Replit-specific environment
+variables. For a normal Windows PC, use npx expo start instead.
+
+If LAN QR networking does not work, stop Metro with Ctrl+C and run:
+
+npx expo start --tunnel
+
+Tunnel mode is useful on restricted/public Wi-Fi or when a firewall blocks LAN
+discovery, but it may reload more slowly.
+
+After the first setup, the repository-root helper can launch the app:
+
+.\run-mobile.ps1
+
+
+H. TROUBLESHOOTING
+-------------------------------------------------------------------------------
+
+1. PowerShell says scripts are disabled
+
+Do not change execution policy globally. Run a script in a one-time process:
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
+
+For Node command shims such as pnpm.ps1 or npx.ps1, use the .cmd form:
+
+pnpm.cmd --version
+npx.cmd expo start
+
+2. pnpm is not recognized
+
+corepack enable
+corepack prepare pnpm@11.21.0 --activate
+pnpm --version
+
+Close and reopen PowerShell if PATH changes are not visible immediately.
+
+3. Node is missing or the version is outside the supported range
+
+node --version
+
+Install Node 22.18.0, close all terminals, open a new PowerShell window, and
+verify again. The accepted project range is >=20.19.4 and <23.
+
+4. Metro cache appears stale
+
+From artifacts\unione-mobile:
+
+npx expo start -c
+
+5. The phone cannot open the Expo QR link
+
+- Confirm PC and phone are on the same network.
+- Allow Node/Expo through Windows Firewall for private networks when prompted.
+- Disable a VPN temporarily if permitted by your network policy.
+- Retry with: npx expo start --tunnel
+
+6. Port 8081 is already occupied
+
+First identify the exact process instead of killing every Node process:
+
+Get-NetTCPConnection -LocalPort 8081 -State Listen
+Get-Process -Id <OwningProcess number from the previous command>
+
+Only after confirming it is a stale Metro process, stop that specific PID:
+
+Stop-Process -Id <confirmed PID>
+
+Alternatively, start Expo on an available port:
+
+npx expo start --port 0
+
+7. Dependencies are out of sync
+
+Return to the repository root and run:
+
+pnpm install
+pnpm run typecheck
+
+Do not delete pnpm-lock.yaml. Do not generate package-lock.json or yarn.lock.
+If the committed lockfile appears conflicted, inspect git status and restore or
+pull the correct repository version before installing again.
+
+8. Windows path or file-watching problems
+
+Use a short local path such as C:\src\Unione-APP. Avoid deeply nested folders,
+network drives, and cloud-synchronized folders when Metro file watching is
+unreliable.
+
+
+I. OPTIONAL: BUILD A STANDALONE ANDROID APK WITH EAS
+-------------------------------------------------------------------------------
+
+Expo Go is the normal development/demo workflow. Build an APK only when a
+standalone install is needed for sharing or device testing.
+
+The checked-in eas.json has a "preview" profile with internal distribution,
+which produces an installable Android APK.
+
+From any directory:
+
+npm install --global eas-cli
+eas --version
+eas login
+
+The eas.json file requires EAS CLI 22.0.0 or newer.
+
+Then, from artifacts\unione-mobile:
+
+eas build --platform android --profile preview
+
+Manual requirements:
+
+- An Expo account
+- Access to the EAS project configured in app.json
+- Internet access for the cloud build
+- Confirmation/creation of Android signing credentials when EAS requests it
+
+An APK build is not required to run or develop the app through Expo Go.
+
+
+J. NORMAL DAY-TO-DAY START
+-------------------------------------------------------------------------------
+
+After the first successful setup:
+
+cd <path-to-your-clone>\Unione-APP
+.\run-mobile.ps1
+
+Or run directly:
+
+cd artifacts\unione-mobile
+npx expo start

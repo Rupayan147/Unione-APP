@@ -2,27 +2,29 @@ import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DemoPill, ProgressBar, StatusPill, styles as ui } from '@/components/Ui';
 import { getBenefit } from '@/data/mockData';
 import { useUnione } from '@/context/UnioneContext';
 import { useColors } from '@/hooks/useColors';
+import { SectionIllustration, APP_IMAGES } from '@/components/SectionIllustration';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 export default function ApplicationsScreen() {
   const colors = useColors();
-  const insets = useSafeAreaInsets();
+  const { width, fontScale, pagePadding, topContentPadding, tabScreenBottomPadding } = useResponsiveLayout();
+  const stackStats = width <= 360 || fontScale >= 1.2;
   const { applications } = useUnione();
 
   const actionRequiredCount = applications.filter((a) => a.status === 'Action required').length;
-  const underReviewCount = applications.filter((a) => a.status === 'Under review').length;
-  const submittedCount = applications.filter((a) => a.status === 'Submitted').length;
+  const preparingCount = applications.filter((a) => a.status === 'Preparing').length;
+  const reviewCompleteCount = applications.filter((a) => a.status === 'Review complete').length;
 
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
       contentContainerStyle={[
         ui.content,
-        { paddingTop: Math.max(insets.top + 16, 48), paddingBottom: Math.max(insets.bottom + 110, 130) },
+        { paddingHorizontal: pagePadding, paddingTop: topContentPadding, paddingBottom: tabScreenBottomPadding },
       ]}
       showsVerticalScrollIndicator={false}
     >
@@ -37,25 +39,33 @@ export default function ApplicationsScreen() {
         </View>
       </View>
 
-      <Text style={[ui.body, { color: colors.mutedForeground, marginTop: 6 }]}>
+      <Text style={[ui.body, { color: colors.mutedForeground, marginTop: 6, marginBottom: 16 }]}>
         Keep track of your active programs and next steps in one place.
       </Text>
 
+      {/* CASE TRACKER VISUAL */}
+      <SectionIllustration
+        source={APP_IMAGES.applicationsTracker}
+        aspectRatio={2.4}
+        badgeText="APPLICATION STATUS"
+        style={{ marginBottom: 16 }}
+      />
+
       {/* STAT SUMMARY PILLS */}
       <View style={styles.statsRow}>
-        <View style={[styles.statChip, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.statChip, stackStats && styles.stackedStatChip, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[ui.h3, { color: colors.foreground }]}>{applications.length}</Text>
           <Text style={[ui.small, { color: colors.mutedForeground }]}>Total active</Text>
         </View>
 
-        <View style={[styles.statChip, { backgroundColor: `${colors.warning}15`, borderColor: `${colors.warning}35` }]}>
+        <View style={[styles.statChip, stackStats && styles.stackedStatChip, { backgroundColor: `${colors.warning}15`, borderColor: `${colors.warning}35` }]}>
           <Text style={[ui.h3, { color: colors.warning }]}>{actionRequiredCount}</Text>
           <Text style={[ui.small, { color: colors.warning }]}>Action needed</Text>
         </View>
 
-        <View style={[styles.statChip, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
-          <Text style={[ui.h3, { color: colors.teal }]}>{underReviewCount + submittedCount}</Text>
-          <Text style={[ui.small, { color: colors.teal }]}>In progress</Text>
+        <View style={[styles.statChip, stackStats && styles.stackedStatChip, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
+          <Text style={[ui.h3, { color: colors.teal }]}>{preparingCount + reviewCompleteCount}</Text>
+          <Text style={[ui.small, { color: colors.teal }]}>Preparing</Text>
         </View>
       </View>
 
@@ -93,7 +103,7 @@ export default function ApplicationsScreen() {
                   <Ionicons name="document-text-outline" size={20} color={colors.teal} />
                 </View>
 
-                <View style={{ flex: 1 }}>
+                <View style={styles.flexibleContent}>
                   <Text style={[ui.h3, { color: colors.foreground }]}>{benefit.name}</Text>
                   <Text style={[ui.small, { color: colors.mutedForeground, marginTop: 2 }]}>
                     {benefit.fullName}
@@ -146,14 +156,16 @@ export default function ApplicationsScreen() {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  headerTagRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  statsRow: { flexDirection: 'row', gap: 10, marginTop: 18 },
-  statChip: { flex: 1, borderWidth: 1, borderRadius: 16, padding: 12, alignItems: 'center', gap: 2 },
+  headerTagRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 10 },
+  statsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 18 },
+  statChip: { flexGrow: 1, flexBasis: 88, minWidth: 0, borderWidth: 1, borderRadius: 16, padding: 12, alignItems: 'center', gap: 2 },
+  stackedStatChip: { flexBasis: '45%' },
+  flexibleContent: { flex: 1, minWidth: 0 },
   noticeCard: { borderWidth: 1, borderRadius: 16, padding: 14, flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 18 },
   appCard: { borderWidth: 1, borderRadius: 20, padding: 18, marginBottom: 14 },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  appIconBox: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  statusRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 18, marginBottom: 10 },
+  appIconBox: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  statusRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, alignItems: 'center', justifyContent: 'space-between', marginTop: 18, marginBottom: 10 },
   actionNeededBox: { borderRadius: 14, borderWidth: 1, padding: 12, flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 16 },
   nextStepBox: { borderTopWidth: 1, marginTop: 16, paddingTop: 12 },
 });
